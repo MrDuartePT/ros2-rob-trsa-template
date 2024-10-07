@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 
-# Dockerfile for production
-# Referring to Dockerfile.dev & hooks/postCreate.sh might be useful for understanding the contents.
+# Dockerfile for development
+# Below RUN statements are broken up to take advantage of Docker layer cache.
 
+# (OPTION) Use base Ubuntu 22.04 if a Nvidia GPU is unavailable.
+# FROM ubuntu:22.04
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -10,95 +12,105 @@ ENV LANG="C.UTF-8" LC_ALL="C.UTF-8"
 RUN echo 'Etc/UTC' > /etc/timezone \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
-# (OPTION) Add VNC server & noVNC web app for debugging and control.
-# COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
-# ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:" \
-#   VNC_RESOLUTION="1440x768x16" \
-#   VNC_DPI="96" \
-#   VNC_PORT="5901" \
-#   NOVNC_PORT="6080" \
-#   DISPLAY=":1"
-# RUN bash /tmp/scripts/desktop-lite-debian.sh root password
+RUN apt-get update \
+  # Needed to curl and authorize ROS repository key.
+  && apt-get install -y curl gnupg lsb-release software-properties-common \
+  && apt-get install -y git \
+  # Enable universe repositories.
+  && add-apt-repository universe
 
+# Add VNC server & noVNC web app for debugging and control.
+COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
+ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:" \
+  VNC_RESOLUTION="1440x768x16" \
+  VNC_DPI="96" \
+  VNC_PORT="5901" \
+  NOVNC_PORT="6080" \
+  DISPLAY=":1"
+RUN bash /tmp/scripts/desktop-lite-debian.sh root password
+
+# Enable openCL support (OpenCV uses it for hardware acceleration).
 RUN mkdir -p /etc/OpenCL/vendors && \
   echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
 
-RUN apt-get update && apt-get install -y \
-  curl \
-  gnupg \
-  lsb-release \
-  software-properties-common \
-  && add-apt-repository universe \
-  && rm -rf /var/lib/apt/lists/*
+# Curl key to authorize ROS repository.
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list
 
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg \
-  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list
-
-WORKDIR /code
-COPY . .
-
-ARG ROS_DISTRO=humble
+# ROS Humble's support window is till 2027 (correct as of 23 Nov 2022).
+ARG ROS_DISTRO=humble 
 ENV ROS_DISTRO=$ROS_DISTRO
 
-RUN apt-get update && apt-get install -y \
-  ros-${ROS_DISTRO}-ros-core \
-  # (OPTION) Add RQT for debugging and control.
-  # ~nros-${ROS_DISTRO}-rqt* \
+RUN apt-get update
+RUN apt-get install -y \
+  ros-${ROS_DISTRO}-ros-base \
   python3-rosdep \
   python3-colcon-common-extensions \
-  python3-pip \
-  && rosdep init \
-  && rosdep update \
-  && . /opt/ros/$ROS_DISTRO/setup.sh \
-  && rosdep install -i --from-path /code -y \
-  && pip install -r /code/requirements.txt \
-  && colcon build --symlink-install \
-  && rm -rf /var/lib/apt/lists/* \
-  && rm -rf /root/.ros/rosdep/* \
-  && rm -rf /root/.cache/pip \
-  && rm -rf log/
+  python3-pip
 
+# Set default version of Python to be the one ROS Humble uses.
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 
 # Install other ROS Packages
 RUN apt-get update && apt-get install -y \
-   ros-humble-joint-state-publisher-gui \
-   ros-humble-urdf-launch \
-   ros-humble-moveit-setup-assistant \
-   ros-humble-moveit-simple-controller-manager \
-   ros-humble-gripper-controllers \
-   ros-humble-ros2-control \
-   ros-humble-moveit-planners \
-   ros-humble-joint-state-broadcaster \
-   ros-humble-joint-trajectory-controller \
-   ros-humble-moveit-resources-panda-moveit-config \
-   ros-humble-moveit-resources-panda-description \
-   ros-humble-camera-calibration
+  ros-humble-joint-state-publisher-gui \
+  ros-humble-urdf-launch \
+  ros-humble-moveit-setup-assistant \
+  ros-humble-moveit-simple-controller-manager \
+  ros-humble-gripper-controllers \
+  ros-humble-ros2-control \
+  ros-humble-moveit-planners \
+  ros-humble-joint-state-broadcaster \
+  ros-humble-joint-trajectory-controller \
+  ros-humble-moveit-resources-panda-moveit-config \
+  ros-humble-moveit-resources-panda-description \
+  ros-humble-camera-calibration \
+  ros-humble-gazebo-ros-pkgs \
+  ros-humble-xacro \
+  ros-humble-slam-toolbox \
+  ros-humble-robot-localization
 
 # Install and generate moveit files
 RUN apt install -y python3-colcon-common-extensions \ 
-   python3-colcon-mixin \
-   python3-vcstool \
-   && colcon mixin update default
+  python3-colcon-mixin \
+  python3-vcstool \
+  && colcon mixin update default
 
-ENV ENV=\$HOME/.shrc
-RUN echo "exec bash" >> ~/.shrc
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /code/install/local_setup.bash" >> ~/.bashrc
+# Initialize rosdep package manager.
+RUN rosdep init && rosdep update
 
-# (OPTION) Uncomment below if using RQT for icons to show up.
-# RUN mkdir ~/.icons && ln -s /usr/share/icons/Tango ~/.icons/hicolor
+# RQT comes with useful debugging and control tools.
+# RQT's plugin support allows for custom visualizations, tools or control panels.
+RUN apt-get install -y ~nros-${ROS_DISTRO}-rqt*
+
+# Curl key to authorize Docker repository.
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
+  && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+
+# Install Docker CLI tools (not including daemon).
+RUN apt-get update \
+  && apt-get install -y docker-ce-cli \
+  && pip install docker-compose
+
+# Create a ros user with sudo access
+RUN addgroup ros
+RUN useradd -m -s /bin/bash -g ros ros
+RUN echo "ros:ros" | /usr/sbin/chpasswd
+RUN echo "ros    ALL=(ALL) ALL" >> /etc/sudoers
+
+# Needed for Dev Container lifecycle hooks to run.
+COPY ./.devcontainer /tmp/.devcontainer
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-# Expose rosbridge port & noVNC port respectively.
-# EXPOSE 9090 6080
 ENTRYPOINT [ \
   # VNC entrypoint
-  #"/usr/local/share/desktop-init.sh", \
-  # ROS entrypoint
-  "/entrypoint.sh" \
+  "/usr/local/share/desktop-init.sh" \
   ]
 
-# (OPTION) Choose between calling roslaunch directly or opening a bash shell.
-# CMD [ "ros2", "launch", "main", "launch.py" ]
-CMD [ "bash" ]
+# Make /bin/sh launch bash instead.
+ENV ENV=\$HOME/.shrc
+RUN echo "exec bash" >> ~/.shrc
+
+# Ensure RQT icons show up.
+RUN mkdir ~/.icons && ln -s /usr/share/icons/Tango ~/.icons/hicolor
