@@ -5,7 +5,7 @@
 {
   // (OPTION) Change the name to help identify which workspace you are in.
   "name": "ROS2 Dev",
-  "dockerComposeFile": "../docker-compose.dev.yml",
+  "dockerComposeFile": "../docker-compose.yml",
   "service": "dev",
   "workspaceFolder": "/", // Default
   // See: https://containers.dev/implementors/json_reference/#lifecycle-scripts

@@ -3,6 +3,7 @@
 # It can be used for misc tasks (e.g., ensuring dependencies are installed).
 
 . /opt/ros/$ROS_DISTRO/setup.sh
+. /usr/share/gazebo/setup.bash
 
 # Due to https://github.com/microsoft/vscode-remote-release/issues/6683,
 # we have to disable git's repository trust feature.

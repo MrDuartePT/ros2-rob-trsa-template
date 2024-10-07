@@ -14,7 +14,7 @@
   // Format code & sort imports on save.
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   },
 
   // Use Prettier to format config files.

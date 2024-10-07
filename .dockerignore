@@ -18,5 +18,6 @@ log
 **/*.py[cod]
 **/*.lprof
 
-# (OPTION) Ignore mount points.
-# data
+# Ignore mount points.
+**/rob_ws*
+**/trsa_ws*
