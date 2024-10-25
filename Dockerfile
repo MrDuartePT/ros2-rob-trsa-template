@@ -8,7 +8,7 @@
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-ENV LANG="C.UTF-8" LC_ALL="C.UTF-8"
+ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8"
 RUN echo 'Etc/UTC' > /etc/timezone \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
@@ -86,11 +86,10 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-robot-localization \
   ros-${ROS_DISTRO}-nav2-rviz-plugins
 
-# Install and generate moveit files
+# Install moveit files
 RUN apt install -y python3-colcon-common-extensions \ 
   python3-colcon-mixin \
-  python3-vcstool \
-  && colcon mixin update default
+  python3-vcstool
 
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
