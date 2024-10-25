@@ -41,27 +41,37 @@ services:
     security_opt:
       - seccomp:unconfined
 
+    # Used to allow ROS to communicate across containers.
+    ipc: service:donor
+    pid: service:donor
+
     # Isolate ROS nodes into their own network.
     network_mode: service:donor
 
     # Override default command so things don't shut down after the process ends.
     command: /bin/sh -c "while sleep 1000; do :; done"
+    # (Optinal) Request for GPU access.
+    #environment:
+    #  - NVIDIA_DRIVER_CAPABILITIES=all
+    #  - __NV_PRIME_RENDER_OFFLOAD=1
+    #  - __GLX_VENDOR_LIBRARY_NAME=nvidia
+    #deploy:
+    #  resources:
+    #    reservations:
+    #      devices:
+    #      - capabilities: [ gpu ]
 
-    # Request for GPU access.
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [ gpu ]
-
-  # Example of setup for ROS to be able to communicate across containers.
-  # Is unnecessary if using a single container.
+    # Example of setup for ROS to be able to communicate across containers.
+    # Is unnecessary if using a single container.
   donor:
     ports:
       # Expose noVNC web app.
       - 6080:6080
       # Expose rosbridge.
       - 9090:9090
+
+    # Used to allow ROS to communicate across containers.
+    ipc: shareable
 
     image: alpine # smallest image
     stop_signal: SIGKILL

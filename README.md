@@ -7,7 +7,6 @@ Template for ROS2 workspace using [VS Code Dev Containers](https://code.visualst
 - For customization, do a global find & replace for `(OPTION)`.
   - Remember to `Dev Containers: Rebuild Container` afterwards!
 - GUI apps are viewable via [noVNC](https://novnc.com/info.html) (VNC client web app) hosted on <http://localhost:6080/>.
-  - **The password is `password`!**
 
 ## Table of Contents
 

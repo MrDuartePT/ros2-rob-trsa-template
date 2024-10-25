@@ -8,26 +8,32 @@
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8"
+ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
 RUN echo 'Etc/UTC' > /etc/timezone \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
 RUN apt-get update \
   # Needed to curl and authorize ROS repository key.
-  && apt-get install -y curl gnupg lsb-release software-properties-common \
+  && apt-get install -y curl sudo gnupg lsb-release software-properties-common \
   && apt-get install -y git \
   # Enable universe repositories.
   && add-apt-repository universe
 
+# Create a vscode user with sudo access
+RUN addgroup vscode
+RUN useradd -m -s /bin/bash -g vscode vscode
+RUN echo "vscode:vscode" | /usr/sbin/chpasswd
+RUN echo "vscode    ALL=(ALL) ALL" >> /etc/sudoers
+
 # Add VNC server & noVNC web app for debugging and control.
 COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
 ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:" \
-  VNC_RESOLUTION="1440x768x16" \
+  VNC_RESOLUTION="1920x1080x16" \
   VNC_DPI="96" \
   VNC_PORT="5901" \
   NOVNC_PORT="6080" \
   DISPLAY=":1"
-RUN bash /tmp/scripts/desktop-lite-debian.sh root password
+RUN bash /tmp/scripts/desktop-lite-debian.sh vscode vscode
 
 # Enable openCL support (OpenCV uses it for hardware acceleration).
 RUN mkdir -p /etc/OpenCL/vendors && \
@@ -96,7 +102,7 @@ RUN rosdep init && rosdep update
 
 # RQT comes with useful debugging and control tools.
 # RQT's plugin support allows for custom visualizations, tools or control panels.
-RUN apt-get install -y ~nros-${ROS_DISTRO}-rqt*
+RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
 
 # Curl key to authorize Docker repository.
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
@@ -106,12 +112,6 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/d
 RUN apt-get update \
   && apt-get install -y docker-ce-cli \
   && pip install docker-compose
-
-# Create a ros user with sudo access
-RUN addgroup ros
-RUN useradd -m -s /bin/bash -g ros ros
-RUN echo "ros:ros" | /usr/sbin/chpasswd
-RUN echo "ros    ALL=(ALL) ALL" >> /etc/sudoers
 
 # Needed for Dev Container lifecycle hooks to run.
 COPY ./.devcontainer /tmp/.devcontainer
