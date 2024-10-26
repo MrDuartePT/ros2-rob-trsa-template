@@ -3,7 +3,7 @@
 # It can be used for misc tasks (e.g., ensuring dependencies are installed).
 
 . /opt/ros/$ROS_DISTRO/setup.sh
-. /usr/share/gazebo/setup.bash
+. /usr/share/gazebo/setup.sh
 
 # Due to https://github.com/microsoft/vscode-remote-release/issues/6683,
 # we have to disable git's repository trust feature.
@@ -15,5 +15,6 @@ git config --global safe.directory "*"
 git submodule update --init --recursive
 
 # Ensure dependencies are installed.
-rosdep install --ignore-src --from-path "$WORKSPACE_ROOT" -y
-pip install -r "$WORKSPACE_ROOT/requirements.txt"
+sudo rosdep install --ignore-src --from-path "/home/$USERNAME/rob_ws" -y
+sudo rosdep install --ignore-src --from-path "/home/$USERNAME/trsa_ws" -y
+sudo pip install -r "$WORKSPACE_ROOT/requirements.txt"

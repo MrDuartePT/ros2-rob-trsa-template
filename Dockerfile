@@ -20,10 +20,13 @@ RUN apt-get update \
   && add-apt-repository universe
 
 # Create a vscode user with sudo access
-RUN addgroup vscode
-RUN useradd -m -s /bin/bash -g vscode vscode
-RUN echo "vscode:vscode" | /usr/sbin/chpasswd
-RUN echo "vscode    ALL=(ALL) ALL" >> /etc/sudoers
+ARG USERNAME=vscode
+ENV USERNAME=$USERNAME
+RUN addgroup ${USERNAME}
+RUN useradd -m -s /bin/bash -g ${USERNAME} ${USERNAME}
+RUN usermod -a -G sudo ${USERNAME}
+RUN echo "${USERNAME}:${USERNAME}" | /usr/sbin/chpasswd
+RUN echo "${USERNAME}    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Add VNC server & noVNC web app for debugging and control.
 COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
