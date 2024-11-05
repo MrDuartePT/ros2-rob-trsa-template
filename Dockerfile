@@ -6,6 +6,7 @@
 # (OPTION) Use base Ubuntu 22.04 if a Nvidia GPU is unavailable.
 # FROM ubuntu:22.04
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
+ARG BUILDARCH
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
@@ -14,7 +15,7 @@ RUN echo 'Etc/UTC' > /etc/timezone \
 
 RUN apt-get update \
   # Needed to curl and authorize ROS repository key.
-  && apt-get install -y curl sudo gnupg lsb-release software-properties-common \
+  && apt-get install -y curl wget sudo gnupg lsb-release software-properties-common \
   && apt-get install -y git \
   # Enable universe repositories.
   && add-apt-repository universe
@@ -89,11 +90,17 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-moveit-resources-panda-moveit-config \
   ros-${ROS_DISTRO}-moveit-resources-panda-description \
   ros-${ROS_DISTRO}-camera-calibration \
-  ros-${ROS_DISTRO}-gazebo-ros-pkgs \
   ros-${ROS_DISTRO}-xacro \
   ros-${ROS_DISTRO}-slam-toolbox \
   ros-${ROS_DISTRO}-robot-localization \
   ros-${ROS_DISTRO}-nav2-rviz-plugins
+
+# Some ros package are not available on AArch64 on ubuntu24.04
+# To solve that problem will clone them to internal workspace
+# On amd64 will still use the ubuntu packages
+ENV BUILDARCH=${BUILDARCH}
+COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
+RUN bash /tmp/scripts/ros2-pkgs.sh
 
 # Install moveit files
 RUN apt install -y python3-colcon-common-extensions \ 
@@ -109,7 +116,7 @@ RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
 
 # Curl key to authorize Docker repository.
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
-  && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+  && add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) stable"
 
 # Install Docker CLI tools (not including daemon).
 RUN apt-get update \

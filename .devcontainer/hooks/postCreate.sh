@@ -5,6 +5,11 @@
 . /opt/ros/$ROS_DISTRO/setup.sh
 . /usr/share/gazebo/setup.sh
 
+# Source ros-internal workspace if exist (For AArch64 machines)
+if [ -d "/opt/ros-internal" ]; then
+    source /opt/ros-internal/setup.bash
+fi
+
 # Auto-activate ROS whenever bash shell is opened.
 echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> ~/.bashrc
 echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> /home/${USERNAME}/.bashrc
