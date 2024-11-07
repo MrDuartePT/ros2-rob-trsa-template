@@ -93,7 +93,8 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-xacro \
   ros-${ROS_DISTRO}-slam-toolbox \
   ros-${ROS_DISTRO}-robot-localization \
-  ros-${ROS_DISTRO}-nav2-rviz-plugins
+  ros-${ROS_DISTRO}-nav2-rviz-plugins \
+  ros-${ROS_DISTRO}-twist-mux
 
 # Some ros package are not available on AArch64 on ubuntu24.04
 # To solve that problem will clone them to internal workspace
