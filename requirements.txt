@@ -2,3 +2,5 @@
 
 # Example:
 # -r ./example_module/example_pkg/requirements.txt
+ultralytics
+numpy<2
