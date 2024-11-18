@@ -77,32 +77,39 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
   ros-${ROS_DISTRO}-urdf-launch \
-  ros-${ROS_DISTRO}-moveit-setup-assistant \
-  ros-${ROS_DISTRO}-moveit-simple-controller-manager \
   ros-${ROS_DISTRO}-gripper-controllers \
   ros-${ROS_DISTRO}-ros2-control \
-  ros-${ROS_DISTRO}-nav2-controller \
-  ros-${ROS_DISTRO}-nav2-smoother \
-  ros-${ROS_DISTRO}-nav2-planner \
-  ros-${ROS_DISTRO}-nav2-behaviors \
-  ros-${ROS_DISTRO}-nav2-bt-navigator \
-  ros-${ROS_DISTRO}-nav2-waypoint-follower \
-  ros-${ROS_DISTRO}-nav2-velocity-smoother \
-  ros-${ROS_DISTRO}-nav2-lifecycle-manager \
   ros-${ROS_DISTRO}-ros-testing \
   ros-${ROS_DISTRO}-graph-msgs \
   ros-${ROS_DISTRO}-rviz-visual-tools \
-  ros-${ROS_DISTRO}-moveit-planners \
   ros-${ROS_DISTRO}-joint-state-broadcaster \
   ros-${ROS_DISTRO}-joint-trajectory-controller \
+  ros-${ROS_DISTRO}-camera-calibration
+
+# Moveit packages
+RUN apt-get install -y \
   ros-${ROS_DISTRO}-moveit-resources-panda-moveit-config \
   ros-${ROS_DISTRO}-moveit-resources-panda-description \
-  ros-${ROS_DISTRO}-camera-calibration \
+  ros-${ROS_DISTRO}-moveit-setup-assistant \
+  ros-${ROS_DISTRO}-moveit-simple-controller-manager \
+  ros-${ROS_DISTRO}-moveit-planners
+
+# Nax2 packages
+RUN apt-get install -y \ 
+  ros-${ROS_DISTRO}-nav2-controller \
+  ros-${ROS_DISTRO}-nav2-smoother \
+  ros-${ROS_DISTRO}-nav2-behaviors \
+  ros-${ROS_DISTRO}-nav2-bt-navigator \
+  ros-${ROS_DISTRO}-nav2-lifecycle-manager \
+  ros-${ROS_DISTRO}-nav2-rviz-plugins \
+  ros-${ROS_DISTRO}-nav2-planner \
+  ros-${ROS_DISTRO}-nav2-waypoint-follower \
+  ros-${ROS_DISTRO}-nav2-velocity-smoother \
   ros-${ROS_DISTRO}-xacro \
   ros-${ROS_DISTRO}-slam-toolbox \
   ros-${ROS_DISTRO}-robot-localization \
-  ros-${ROS_DISTRO}-nav2-rviz-plugins \
   ros-${ROS_DISTRO}-twist-mux
+
 
 # Some ros package are not available on AArch64 on ubuntu24.04
 # To solve that problem will clone them to internal workspace
