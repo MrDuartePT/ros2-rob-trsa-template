@@ -81,6 +81,14 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-moveit-simple-controller-manager \
   ros-${ROS_DISTRO}-gripper-controllers \
   ros-${ROS_DISTRO}-ros2-control \
+  ros-${ROS_DISTRO}-nav2-controller \
+  ros-${ROS_DISTRO}-nav2-smoother \
+  ros-${ROS_DISTRO}-nav2-planner \
+  ros-${ROS_DISTRO}-nav2-behaviors \
+  ros-${ROS_DISTRO}-nav2-bt-navigator \
+  ros-${ROS_DISTRO}-nav2-waypoint-follower \
+  ros-${ROS_DISTRO}-nav2-velocity-smoother \
+  ros-${ROS_DISTRO}-nav2-lifecycle-manager \
   ros-${ROS_DISTRO}-ros-testing \
   ros-${ROS_DISTRO}-graph-msgs \
   ros-${ROS_DISTRO}-rviz-visual-tools \
