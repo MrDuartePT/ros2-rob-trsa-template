@@ -29,6 +29,10 @@ RUN usermod -a -G sudo ${USERNAME}
 RUN echo "${USERNAME}:${USERNAME}" | /usr/sbin/chpasswd
 RUN echo "${USERNAME}    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+# Create input user
+RUN groupadd -g 97 input1
+RUN usermod -a -G input1 ${USERNAME}
+
 # Add VNC server & noVNC web app for debugging and control.
 COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
 ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:" \
@@ -84,10 +88,13 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-rviz-visual-tools \
   ros-${ROS_DISTRO}-joint-state-broadcaster \
   ros-${ROS_DISTRO}-joint-trajectory-controller \
-  ros-${ROS_DISTRO}-camera-calibration
+  ros-${ROS_DISTRO}-camera-calibration \
+  ros-${ROS_DISTRO}-turtlebot3-gazebo
 
 # Moveit packages
 RUN apt-get install -y \
+  ros-${ROS_DISTRO}-py-binding-tools \
+  ros-${ROS_DISTRO}-moveit \
   ros-${ROS_DISTRO}-moveit-resources-panda-moveit-config \
   ros-${ROS_DISTRO}-moveit-resources-panda-description \
   ros-${ROS_DISTRO}-moveit-setup-assistant \
@@ -99,12 +106,16 @@ RUN apt-get install -y \
   ros-${ROS_DISTRO}-nav2-controller \
   ros-${ROS_DISTRO}-nav2-smoother \
   ros-${ROS_DISTRO}-nav2-behaviors \
+  ros-${ROS_DISTRO}-nav2-dwb-controller \
+  ros-${ROS_DISTRO}-nav2-navfn-planner \
   ros-${ROS_DISTRO}-nav2-bt-navigator \
   ros-${ROS_DISTRO}-nav2-lifecycle-manager \
   ros-${ROS_DISTRO}-nav2-rviz-plugins \
   ros-${ROS_DISTRO}-nav2-planner \
   ros-${ROS_DISTRO}-nav2-waypoint-follower \
   ros-${ROS_DISTRO}-nav2-velocity-smoother \
+  ros-${ROS_DISTRO}-navigation2 \
+  ros-${ROS_DISTRO}-nav2-bringup \
   ros-${ROS_DISTRO}-xacro \
   ros-${ROS_DISTRO}-slam-toolbox \
   ros-${ROS_DISTRO}-robot-localization \
