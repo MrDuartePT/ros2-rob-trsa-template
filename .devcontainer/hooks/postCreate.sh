@@ -13,6 +13,8 @@ fi
 # Auto-activate ROS whenever bash shell is opened.
 echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> ~/.bashrc
 echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> /home/${USERNAME}/.bashrc
+echo "export TURTLEBOT3_MODEL=waffle" >> ~/.bashrc
+echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models" >> ~/.bashrc
 
 # Symlink `./rob_ws` and `./trsa_ws` mount point to workspace folder for convenience.
 ln -sf /home/vscode/rob_ws "$WORKSPACE_ROOT/"
