@@ -8,8 +8,8 @@ on:
     branches: [ main ]
   schedule:
     - cron: '0 0 * * 0'
-#  release:
-#    types: [ main ]
+  release:
+    types: [ main ]
 
 jobs:
   push_to_registries:
@@ -57,19 +57,23 @@ jobs:
             mrduartept/ros2-rob-trsa-template
             ghcr.io/${{ github.repository }}
 
-      - name: Build and push Docker images
-        id: push
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push multi-architecture image
+        uses: docker/build-push-action@v5
         #if: steps.check_sha.outputs.cache-hit != 'true'
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: mrduartept/ros2-rob-trsa-template
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+          tags: |
+            mrduartept/ros2-rob-trsa-template:latest
+            mrduartept/ros2-rob-trsa-template:latest-amd64
+            mrduartept/ros2-rob-trsa-template:latest-arm64
+            ghcr.io/mrduartept/ros2-rob-trsa-template:latest
+            ghcr.io/mrduartept/ros2-rob-trsa-template:latest-amd64
+            ghcr.io/mrduartept/ros2-rob-trsa-template:latest-arm64
+          platforms: linux/amd64,linux/arm64
