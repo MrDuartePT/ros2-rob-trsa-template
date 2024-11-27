@@ -11,9 +11,18 @@ volumes:
 
 services:
   dev:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    ## Github
+    image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:latest'
+    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:latest-amd64'
+    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:latest-arm64'
+    ## Docker Hub
+    #image: 'mrduartept/ros2-rob-trsa-template:latest'
+    #image: 'mrduartept/ros2-rob-trsa-template:latest-amd64'
+    #image: 'mrduartept/ros2-rob-trsa-template:latest-arm64'
+    # Can be build locally if prefered
+    #build:
+      #context: .
+      #dockerfile: Dockerfile
 
     volumes:
       # Store VS Code extensions in named volume to prevent re-downloads.
