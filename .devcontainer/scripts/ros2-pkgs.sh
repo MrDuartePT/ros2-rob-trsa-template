@@ -21,9 +21,13 @@ if [ "$BUILDARCH" = "arm64" ]; then
     sed -i '/vision_opencv/!b;n;s/version: ros2/version: humble/' gazebo_ros_pkgs.repos
     vcs import src < gazebo_ros_pkgs.repos
 
+    ## ros-humble-turtlebot3*
+    vcs import src < /tmp/scripts/turtlebot3-gazebo.repos
+
     vcs custom --args checkout humble
     rosdep install --from-paths src --ignore-src -r -y
     colcon build
+
 else
-    apt install -y ros-${ROS_DISTRO}-gazebo-ros-pkgs
+    apt install -y ros-${ROS_DISTRO}-gazebo-ros-pkgs ros-${ROS_DISTRO}-turtlebot3 ros-${ROS_DISTRO}-turtlebot3-msgs ros-${ROS_DISTRO}-turtlebot3-gazebo
 fi

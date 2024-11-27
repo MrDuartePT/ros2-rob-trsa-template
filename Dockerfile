@@ -88,8 +88,7 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-rviz-visual-tools \
   ros-${ROS_DISTRO}-joint-state-broadcaster \
   ros-${ROS_DISTRO}-joint-trajectory-controller \
-  ros-${ROS_DISTRO}-camera-calibration \
-  ros-${ROS_DISTRO}-turtlebot3-gazebo
+  ros-${ROS_DISTRO}-camera-calibration
 
 # Moveit packages
 RUN apt-get install -y \
@@ -122,11 +121,12 @@ RUN apt-get install -y \
   ros-${ROS_DISTRO}-twist-mux
 
 
-# Some ros package are not available on AArch64 on ubuntu24.04
+# Some ros package are not available on AArch64 on ubuntu22.04
 # To solve that problem will clone them to internal workspace
 # On amd64 will still use the ubuntu packages
 ENV BUILDARCH=${BUILDARCH}
 COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
+COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/turtlebot3-gazebo.repos
 RUN bash /tmp/scripts/ros2-pkgs.sh
 
 # Install moveit files
