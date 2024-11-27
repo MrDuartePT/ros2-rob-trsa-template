@@ -1,0 +1,45 @@
+name: Create Multi-Architecture Manifest
+
+on:
+  workflow_run:
+    workflows:
+      - Publish Docker image (amd64)
+      - Publish Docker image (arm64)
+    types:
+      - completed
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+
+jobs:
+  create_manifest:
+    name: Create multi-arch manifest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Create and push manifest
+        run: |
+          docker buildx create --use
+          docker buildx imagetools create --tag mrduartept/ros2-rob-trsa-template:latest \
+            mrduartept/ros2-rob-trsa-template:latest-amd64 \
+            mrduartept/ros2-rob-trsa-template:latest-arm64
+          docker buildx imagetools create --tag ghcr.io/mrduartept/ros2-rob-trsa-template:latest \
+            ghcr.io/mrduartept/ros2-rob-trsa-template:latest-amd64 \
+            ghcr.io/mrduartept/ros2-rob-trsa-template:latest-arm64

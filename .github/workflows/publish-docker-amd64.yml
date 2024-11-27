@@ -3,6 +3,7 @@
 # You can also reference a tag or branch, but the action may change without warning.
 
 name: Publish Docker image (amd64)
+
 on:
   push:
     branches: [ main ]
@@ -70,8 +71,6 @@ jobs:
           context: .
           push: true
           tags: |
-            mrduartept/ros2-rob-trsa-template:latest
             mrduartept/ros2-rob-trsa-template:latest-amd64
-            ghcr.io/mrduartept/ros2-rob-trsa-template:latest
             ghcr.io/mrduartept/ros2-rob-trsa-template:latest-amd64
           platforms: linux/amd64
