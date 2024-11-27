@@ -36,7 +36,7 @@ RUN usermod -a -G input1 ${USERNAME}
 # Add VNC server & noVNC web app for debugging and control.
 COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
 ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:" \
-  VNC_RESOLUTION="1920x1080x16" \
+  VNC_RESOLUTION="1920x1080x32" \
   VNC_DPI="96" \
   VNC_PORT="5901" \
   NOVNC_PORT="6080" \
