@@ -3,7 +3,7 @@
 # This scripts manually install Ros Packages for AArch64
 # Since Ubuntu 22.04 not package some of them on arm
 
-if [ "$BUILDARCH" = "arm64" ]; then
+if [ "$TARGETARCH" = "arm64" ]; then
     ## Install gazebo from ppa
     sudo add-apt-repository ppa:openrobotics/gazebo11-non-amd64
     sudo apt update
@@ -18,10 +18,11 @@ if [ "$BUILDARCH" = "arm64" ]; then
 
     ## ros-humble-gazebo_ros_pkgs
     wget https://raw.githubusercontent.com/ros-simulation/gazebo_ros_pkgs/ros2/gazebo_ros_pkgs.repos
-    sed -i '/vision_opencv/!b;n;s/version: ros2/version: humble/' gazebo_ros_pkgs.repos
+    sed -i "/vision_opencv/!b;n;s/version: ros2/version: ${ROS_DISTRO}/" gazebo_ros_pkgs.repos
     vcs import src < gazebo_ros_pkgs.repos
 
     ## ros-humble-turtlebot3*
+    sed -i "s/ROS_DISTRO/${ROS_DISTRO}/g" /tmp/scripts/turtlebot3-gazebo.repos
     vcs import src < /tmp/scripts/turtlebot3-gazebo.repos
 
     vcs custom --args checkout humble

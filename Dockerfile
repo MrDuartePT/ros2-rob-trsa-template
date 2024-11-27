@@ -6,7 +6,15 @@
 # (OPTION) Use base Ubuntu 22.04 if a Nvidia GPU is unavailable.
 # FROM ubuntu:22.04
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
-ARG BUILDARCH
+ARG TARGETARCH
+RUN if [ -z "$BUILDARCH" ]; then \
+      BUILDARCH=$(dpkg --print-architecture); \
+      echo "Detected architecture: $BUILDARCH"; \
+    else \
+      echo "Provided architecture: $BUILDARCH"; \
+    fi && \
+    echo "$BUILDARCH" > /tmp/buildarch
+
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
@@ -124,7 +132,7 @@ RUN apt-get install -y \
 # Some ros package are not available on AArch64 on ubuntu22.04
 # To solve that problem will clone them to internal workspace
 # On amd64 will still use the ubuntu packages
-ENV BUILDARCH=${BUILDARCH}
+ENV TARGETARCH=${TARGETARCH}
 COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
 COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/turtlebot3-gazebo.repos
 RUN bash /tmp/scripts/ros2-pkgs.sh
