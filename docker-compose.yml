@@ -24,6 +24,9 @@ services:
       #context: .
       #dockerfile: Dockerfile
 
+    devices:
+      - "/dev/fuse:/dev/fuse"
+
     volumes:
       # Store VS Code extensions in named volume to prevent re-downloads.
       - vscode-extensions:/root/.vscode-server
@@ -49,6 +52,7 @@ services:
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     cap_add:
       - SYS_PTRACE
+      - SYS_ADMIN
     security_opt:
       - seccomp:unconfined
 

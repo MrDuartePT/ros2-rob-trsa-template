@@ -96,7 +96,8 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-rviz-visual-tools \
   ros-${ROS_DISTRO}-joint-state-broadcaster \
   ros-${ROS_DISTRO}-joint-trajectory-controller \
-  ros-${ROS_DISTRO}-camera-calibration
+  ros-${ROS_DISTRO}-camera-calibration \
+  ros-${ROS_DISTRO}-behaviortree-cpp
 
 # Moveit packages
 RUN apt-get install -y \
@@ -149,6 +150,33 @@ RUN rosdep init && rosdep update
 # RQT's plugin support allows for custom visualizations, tools or control panels.
 RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
 
+# Groot1 Build
+RUN apt-get update && apt-get install -y \
+    git \
+    cmake \
+    build-essential \
+    qtbase5-dev \
+    libqt5svg5-dev \
+    libzmq3-dev \
+    libdw-dev \
+    libncurses-dev \
+    && git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git /opt/Groot
+
+WORKDIR /opt/Groot
+
+RUN mkdir build \
+    && cd build \
+    && cmake .. \
+    && make
+
+RUN cp /opt/Groot/build/Groot /usr/bin/Groot
+RUN cp /opt/Groot/Groot.desktop /usr/share/applications
+RUN cp /opt/Groot/groot_icon.png /usr/share/icons
+
+# Groot 2 (no AppImage for Arm64 use qemu)
+COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
+RUN bash /tmp/scripts/groot2.sh
+
 # Curl key to authorize Docker repository.
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
   && add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) stable"
@@ -175,3 +203,4 @@ RUN mkdir ~/.icons && ln -s /usr/share/icons/Tango ~/.icons/hicolor
 
 # Set non-root user as default user
 USER ${USERNAME}
+WORKDIR /home/${USERNAME}
