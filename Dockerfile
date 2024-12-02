@@ -87,6 +87,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 
 # Install other ROS Packages
 RUN apt-get update && apt-get install -y \
+  ros-${ROS_DISTRO}-py-binding-tools \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
   ros-${ROS_DISTRO}-urdf-launch \
   ros-${ROS_DISTRO}-gripper-controllers \
@@ -101,7 +102,6 @@ RUN apt-get update && apt-get install -y \
 
 # Moveit packages
 RUN apt-get install -y \
-  ros-${ROS_DISTRO}-py-binding-tools \
   ros-${ROS_DISTRO}-moveit \
   ros-${ROS_DISTRO}-moveit-common \
   ros-${ROS_DISTRO}-moveit-resources-panda-moveit-config \
@@ -208,3 +208,11 @@ RUN mkdir ~/.icons && ln -s /usr/share/icons/Tango ~/.icons/hicolor
 # Set non-root user as default user
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
+
+# Setup colcon mixin and metadata in vscode user
+RUN colcon mixin add default \
+  https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
+  colcon mixin update && \
+  colcon metadata add default \
+  https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
+  colcon metadata update
