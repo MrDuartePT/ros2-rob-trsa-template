@@ -103,10 +103,14 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get install -y \
   ros-${ROS_DISTRO}-py-binding-tools \
   ros-${ROS_DISTRO}-moveit \
+  ros-${ROS_DISTRO}-moveit-common \
   ros-${ROS_DISTRO}-moveit-resources-panda-moveit-config \
   ros-${ROS_DISTRO}-moveit-resources-panda-description \
+  ros-${ROS_DISTRO}-moveit-ros-perception \
   ros-${ROS_DISTRO}-moveit-setup-assistant \
   ros-${ROS_DISTRO}-moveit-simple-controller-manager \
+  ros-${ROS_DISTRO}-moveit-servo \
+  ros-${ROS_DISTRO}-moveit-visual-tools \
   ros-${ROS_DISTRO}-moveit-planners
 
 # Nax2 packages
