@@ -69,6 +69,7 @@ RUN apt-get install -y \
   python3-rosdep \
   python3-colcon-common-extensions \
   python3-colcon-mixin \
+  python3-vcstool \
   python3-pip
 
 # Setup colcon mixin and metadata
@@ -84,6 +85,37 @@ RUN apt-get update && apt-get install -y --no-install-recommends ros-humble-desk
 
 # Set default version of Python to be the one ROS Humble uses.
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
+
+# RQT comes with useful debugging and control tools.
+# RQT's plugin support allows for custom visualizations, tools or control panels.
+RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
+
+# Groot1 Build
+RUN apt-get update && apt-get install -y \
+    git \
+    cmake \
+    build-essential \
+    qtbase5-dev \
+    libqt5svg5-dev \
+    libzmq3-dev \
+    libdw-dev \
+    libncurses-dev \
+    && git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git /opt/Groot
+
+WORKDIR /opt/Groot
+
+RUN mkdir build \
+    && cd build \
+    && cmake .. \
+    && make
+
+RUN cp /opt/Groot/build/Groot /usr/bin/Groot
+RUN cp /opt/Groot/Groot.desktop /usr/share/applications
+RUN cp /opt/Groot/groot_icon.png /usr/share/icons
+
+# Groot 2 (no AppImage for Arm64 use qemu)
+COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
+RUN bash /tmp/scripts/groot2.sh
 
 # Install other ROS Packages
 RUN apt-get update && apt-get install -y \
@@ -133,7 +165,6 @@ RUN apt-get install -y \
   ros-${ROS_DISTRO}-robot-localization \
   ros-${ROS_DISTRO}-twist-mux
 
-
 # Some ros package are not available on AArch64 on ubuntu22.04
 # To solve that problem will clone them to internal workspace
 # On amd64 will still use the ubuntu packages
@@ -142,44 +173,8 @@ COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
 COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/turtlebot3-gazebo.repos
 RUN bash /tmp/scripts/ros2-pkgs.sh
 
-# Install moveit files
-RUN apt install -y python3-colcon-common-extensions \ 
-  python3-colcon-mixin \
-  python3-vcstool
-
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
-
-# RQT comes with useful debugging and control tools.
-# RQT's plugin support allows for custom visualizations, tools or control panels.
-RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
-
-# Groot1 Build
-RUN apt-get update && apt-get install -y \
-    git \
-    cmake \
-    build-essential \
-    qtbase5-dev \
-    libqt5svg5-dev \
-    libzmq3-dev \
-    libdw-dev \
-    libncurses-dev \
-    && git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git /opt/Groot
-
-WORKDIR /opt/Groot
-
-RUN mkdir build \
-    && cd build \
-    && cmake .. \
-    && make
-
-RUN cp /opt/Groot/build/Groot /usr/bin/Groot
-RUN cp /opt/Groot/Groot.desktop /usr/share/applications
-RUN cp /opt/Groot/groot_icon.png /usr/share/icons
-
-# Groot 2 (no AppImage for Arm64 use qemu)
-COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
-RUN bash /tmp/scripts/groot2.sh
 
 # Curl key to authorize Docker repository.
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
