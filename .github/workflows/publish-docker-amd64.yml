@@ -74,3 +74,5 @@ jobs:
             mrduartept/ros2-rob-trsa-template:latest-amd64
             ghcr.io/mrduartept/ros2-rob-trsa-template:latest-amd64
           platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
