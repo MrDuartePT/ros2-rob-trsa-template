@@ -4,11 +4,11 @@
 # Since Ubuntu 22.04 not package some of them on arm
 
 if [ "$TARGETARCH" = "arm64" ]; then
-    ## Install gazebo from ppa
+    ## Install gazebo from ppa and depends
     sudo add-apt-repository ppa:openrobotics/gazebo11-non-amd64
     sudo apt update
 
-    sudo apt install -y gazebo
+    sudo apt install -y gazebo gazebo-plugin-base libgazebo-dev ros-${ROS_DISTRO}-ros-workspace
 
     ## Internal Workspace for missing packages
     mkdir -p /opt/ros-internal/src
