@@ -203,6 +203,9 @@ RUN echo "exec bash" >> ~/.shrc
 # Ensure RQT icons show up.
 RUN mkdir ~/.icons && ln -s /usr/share/icons/Tango ~/.icons/hicolor
 
+# Update all the packages
+RUN apt-get update && apt-get upgrade -y
+
 # Set non-root user as default user
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
