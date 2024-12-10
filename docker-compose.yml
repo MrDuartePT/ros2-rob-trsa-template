@@ -36,7 +36,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # Mount point for `./rob_ws` and `./trsa_ws` folder.
       ## Linux/MacOs Mount
-      - $HOME/Documents/FCT/Ros2/rob_ws:/home/vcode/rob_ws
+      - $HOME/Documents/FCT/Ros2/rob_ws:/home/vscode/rob_ws
       - $HOME/Documents/FCT/Ros2/trsa_ws:/home/vscode/trsa_ws
       - $HOME/Documents/FCT/Ros2/trsa_ws/.gazebo-cache:/home/vscode/.gazebo
       ## Windows Mount
