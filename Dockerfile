@@ -127,6 +127,7 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-ros-testing \
   ros-${ROS_DISTRO}-graph-msgs \
   ros-${ROS_DISTRO}-rviz-visual-tools \
+  ros-${ROS_DISTRO}-urdf-tutorial \
   ros-${ROS_DISTRO}-joint-state-broadcaster \
   ros-${ROS_DISTRO}-joint-trajectory-controller \
   ros-${ROS_DISTRO}-camera-calibration \
@@ -136,9 +137,11 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get install -y \
   ros-${ROS_DISTRO}-moveit \
   ros-${ROS_DISTRO}-moveit-common \
+  ros-${ROS_DISTRO}-moveit-resources \
   ros-${ROS_DISTRO}-moveit-resources-panda-moveit-config \
   ros-${ROS_DISTRO}-moveit-resources-panda-description \
   ros-${ROS_DISTRO}-moveit-ros-perception \
+  ros-${ROS_DISTRO}-moveit-runtime \
   ros-${ROS_DISTRO}-moveit-setup-assistant \
   ros-${ROS_DISTRO}-moveit-simple-controller-manager \
   ros-${ROS_DISTRO}-moveit-servo \
