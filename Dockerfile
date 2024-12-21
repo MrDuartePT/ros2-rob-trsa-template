@@ -100,18 +100,18 @@ RUN apt-get update && apt-get install -y \
     libzmq3-dev \
     libdw-dev \
     libncurses-dev \
-    && git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git /opt/Groot
+    && git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git /tmp/Groot
 
-WORKDIR /opt/Groot
+WORKDIR /tmp/Groot
 
 RUN mkdir build \
     && cd build \
     && cmake .. \
     && make
 
-RUN cp /opt/Groot/build/Groot /usr/bin/Groot
-RUN cp /opt/Groot/Groot.desktop /usr/share/applications
-RUN cp /opt/Groot/groot_icon.png /usr/share/icons
+RUN cp /tmp/Groot/build/Groot /usr/bin/Groot
+RUN cp /tmp/Groot/Groot.desktop /usr/share/applications
+RUN cp /tmp/Groot/groot_icon.png /usr/share/icons
 
 # Groot 2 (no AppImage for Arm64 use qemu)
 COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
@@ -173,7 +173,7 @@ RUN apt-get install -y \
 # On amd64 will still use the ubuntu packages
 ENV TARGETARCH=${TARGETARCH}
 COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
-COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/turtlebot3-gazebo.repos
+COPY ./.devcontainer/scripts/turtlebot3-gazebo.repos /tmp/scripts/turtlebot3-gazebo.repos
 RUN bash /tmp/scripts/ros2-pkgs.sh
 
 # Initialize rosdep package manager.
