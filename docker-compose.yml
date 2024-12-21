@@ -13,12 +13,12 @@ services:
   dev:
     ## Github
     image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:latest'
-    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:latest-amd64'
-    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:latest-arm64'
+    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:humble-amd64'
+    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:humble-arm64'
     ## Docker Hub
     #image: 'mrduartept/ros2-rob-trsa-template:latest'
-    #image: 'mrduartept/ros2-rob-trsa-template:latest-amd64'
-    #image: 'mrduartept/ros2-rob-trsa-template:latest-arm64'
+    #image: 'mrduartept/ros2-rob-trsa-template:humble-amd64'
+    #image: 'mrduartept/ros2-rob-trsa-template:humble-arm64'
     # Can be build locally if prefered
     #build:
       #context: .
