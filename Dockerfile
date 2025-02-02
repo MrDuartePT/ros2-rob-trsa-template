@@ -90,29 +90,6 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 # RQT's plugin support allows for custom visualizations, tools or control panels.
 RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
 
-# Groot1 Build
-RUN apt-get update && apt-get install -y \
-    git \
-    cmake \
-    build-essential \
-    qtbase5-dev \
-    libqt5svg5-dev \
-    libzmq3-dev \
-    libdw-dev \
-    libncurses-dev \
-    && git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git /tmp/Groot
-
-WORKDIR /tmp/Groot
-
-RUN mkdir build \
-    && cd build \
-    && cmake .. \
-    && make
-
-RUN cp /tmp/Groot/build/Groot /usr/bin/Groot
-RUN cp /tmp/Groot/Groot.desktop /usr/share/applications
-RUN cp /tmp/Groot/groot_icon.png /usr/share/icons
-
 # Groot 2 (no AppImage for Arm64 use qemu)
 COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
 RUN bash /tmp/scripts/groot2.sh
