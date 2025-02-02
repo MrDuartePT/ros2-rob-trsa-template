@@ -20,20 +20,11 @@ Name[en_US]=Groot2
 EOF
 
 if [ "$TARGETARCH" = "arm64" ]; then
-    # Install from source Box64/Box86
+    # Dependencies for Box64
     sudo apt install -y qemu qemu-user qemu-user-static binfmt-support libc6
 
-    # Box86
-    git clone https://github.com/ptitSeb/box86
-    cd box86
-    mkdir build; cd build; cmake .. -DRPI4=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo
-    make -j$(nproc)
-    make install
-
-    # Box64
-    git clone https://github.com/ptitSeb/box64
-    cd box64
-    mkdir build; cd build; cmake .. -D ARM_DYNAREC=ON -D CMAKE_BUILD_TYPE=RelWithDebInfo
-    make -j$(nproc)
-    make install
+    # Box64 ppa
+    wget https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list
+    wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg 
+    apt update && apt install box64 -y
 fi

@@ -90,7 +90,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 # RQT's plugin support allows for custom visualizations, tools or control panels.
 RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
 
-# Groot 2 (no AppImage for Arm64 use qemu)
+# Groot 2 (no AppImage for Arm64 use Box64)
 COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
 RUN bash /tmp/scripts/groot2.sh
 
