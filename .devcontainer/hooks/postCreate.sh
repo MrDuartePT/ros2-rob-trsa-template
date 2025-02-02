@@ -6,8 +6,8 @@
 . /usr/share/gazebo/setup.sh
 
 # Auto-activate ROS whenever bash shell is opened.
+echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> /root/.bashrc
 echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> ~/.bashrc
-echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> /home/${USERNAME}/.bashrc
 echo "export TURTLEBOT3_MODEL=waffle" >> ~/.bashrc
 echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models" >> ~/.bashrc
 
@@ -18,8 +18,8 @@ if [ -d "/opt/ros-internal" ]; then
 fi
 
 # Symlink `./rob_ws` and `./trsa_ws` mount point to workspace folder for convenience.
-ln -sf /home/vscode/rob_ws "$WORKSPACE_ROOT/"
-ln -sf /home/vscode/trsa_ws "$WORKSPACE_ROOT/"
+ln -sf /home/${USERNAME}/rob_ws "$WORKSPACE_ROOT/"
+ln -sf /home/${USERNAME}/trsa_ws "$WORKSPACE_ROOT/"
 
 if [ -h "$WORKSPACE_ROOT/rob_ws" ] && [ -h "$WORKSPACE_ROOT/trsa_ws" ]; then
     source $WORKSPACE_ROOT/rob_ws/install/setup.bash

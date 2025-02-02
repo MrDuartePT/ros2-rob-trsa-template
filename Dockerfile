@@ -21,7 +21,7 @@ ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
 RUN echo 'Etc/UTC' > /etc/timezone \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
-RUN apt-get update \
+RUN apt-get update && apt-get -y upgrade \
   # Needed to curl and authorize ROS repository key.
   && apt-get install -y curl wget sudo gnupg lsb-release software-properties-common \
   && apt-get install -y git \
