@@ -81,7 +81,7 @@ RUN colcon mixin add default \
   colcon metadata update
 
 # Install Ros Desktop Full
-RUN apt-get update && apt-get install -y --no-install-recommends ros-humble-desktop-full
+RUN apt-get update && apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-desktop-full
 
 # Set default version of Python to be the one ROS Humble uses.
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
