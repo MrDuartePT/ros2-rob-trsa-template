@@ -1,3 +1,8 @@
+[![Docker image (amd64)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-amd64.yml/badge.svg)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-amd64.yml)
+[![Docker image (arm64)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-arm64.yml/badge.svg)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-arm64.yml)
+[![Docker Image Size](https://badgen.net/docker/size/mrduartept/ros2-rob-trsa-template/jazzy?icon=docker&label=image%20size)](https://hub.docker.com/r/mrduartept/ros2-rob-trsa-template/)
+[![Docker Pulls](https://badgen.net/docker/pulls/mrduartept/ros2-rob-trsa-template?icon=docker&label=pulls)](https://hub.docker.com/r/mrduartept/ros2-rob-trsa-template/)
+
 # ros2-rob-trsa-template
 
 Template for ROS2 workspace using [VS Code Dev Containers](https://code.visualstudio.com/docs/remote/containers) & [Docker Compose](https://docs.docker.com/compose/).
@@ -88,7 +93,7 @@ rosdep update
 
 ### Change ROS Distro
 
-To change ROS Distro, do a global search for the current distro (`humble`) and replace as necessary with the new distro. Afterwards, rebuild the Dev Container.
+To change ROS Distro, do a global search for the current distro (`jazzy`) and replace as necessary with the new distro. Afterwards, rebuild the Dev Container.
 
 ### Docker Image Distribution
 
@@ -99,7 +104,7 @@ See <https://docs.docker.com/engine/reference/commandline/docker/> for more info
 > Note: If using `Dev Containers: Clone Repository in Container Volume...` on Windows, follow <https://code.visualstudio.com/docs/containers/choosing-dev-environment#_windows-subsystem-for-linux> to ensure built images are stored on the host computer's image repository.
 
 ```sh
-docker build . -t ros-humble-rob-trsa:vx.x.x -t ros-humble-rob-trsa:latest
+docker build . -t ros-jazzy-rob-trsa:vx.x.x -t ros-jazzy-rob-trsa:latest
 ```
 
 Images can have multiple names tagged to them. Tagging images with the version number and as latest helps when distributing images.
@@ -109,18 +114,18 @@ Images can have multiple names tagged to them. Tagging images with the version n
 > Note: Run this command on the host computer rather than in the Dev Container.
 
 ```sh
-docker save ros-humble-rob-trsa:vx.x.x ros-humble-rob-trsa:latest -o ros-humble-rob-trsa-vx.x.x.tar
+docker save ros-jazzy-rob-trsa:vx.x.x ros-jazzy-rob-trsa:latest -o ros-jazzy-rob-trsa-vx.x.x.tar
 ```
 
-Compressing the image afterwards using `xzip` is recommended to save space. Docker is able to load compressed images (i.e., `ros-humble-rob-trsa-vx.x.x.tar.xz`) without decompressing manually.
+Compressing the image afterwards using `xzip` is recommended to save space. Docker is able to load compressed images (i.e., `ros-jazzy-rob-trsa-vx.x.x.tar.xz`) without decompressing manually.
 
 #### Importing
 
 ```sh
-docker load -i ros-humble-rob-trsa-vx.x.x.tar.xz
+docker load -i ros-jazzy-rob-trsa-vx.x.x.tar.xz
 ```
 
-Imports the image and its names. It will still be tagged as `ros-humble-rob-trsa:vx.x.x` and `ros-humble-rob-trsa:latest`, conveniently replacing the previous `latest`.
+Imports the image and its names. It will still be tagged as `ros-jazzy-rob-trsa:vx.x.x` and `ros-jazzy-rob-trsa:latest`, conveniently replacing the previous `latest`.
 
 ## Troubleshooting
 

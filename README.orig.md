@@ -175,7 +175,7 @@ The current Dockerfiles should work in most cases without needing edits. Nonethe
 
 ### Change ROS Distro
 
-To change ROS Distro, do a global search for the current distro (`humble`) and replace as necessary with the new distro. Afterwards, rebuild the Dev Container.
+To change ROS Distro, do a global search for the current distro (`jazzy`) and replace as necessary with the new distro. Afterwards, rebuild the Dev Container.
 
 ## Troubleshooting
 

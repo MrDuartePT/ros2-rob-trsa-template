@@ -1,4 +1,4 @@
-name: Create Multi-Architecture Manifest
+name: Create Multi-Architecture Manifest - jazzy
 
 on:
   workflow_run:

@@ -4,12 +4,10 @@ apt-get update && apt-get install -y ocl-icd-libopencl1 clinfo
 mkdir -p /etc/OpenCL/vendors
 
 # Intel GPU/NPU depedencies (478MB)
-curl -fsSL https://repositories.intel.com/gpu/intel-graphics.key | gpg --dearmor -o /usr/share/keyrings/intel-graphics.gpg && \
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy unified" > /etc/apt/sources.list.d/intel-gpu-jammy.list
-
+add-apt-repository -y ppa:kobuk-team/intel-graphics
 apt-get update && apt-get install -y intel-opencl-icd intel-media-va-driver-non-free mesa-va-drivers \
     mesa-vdpau-drivers mesa-vulkan-drivers va-driver-all \
-    libze-intel-gpu1 libze1 intel-opencl-icd libze-dev intel-ocloc clinfo
+    libze-intel-gpu1 libze1 intel-metrics-discovery intel-opencl-icd intel-gsc intel-ocloc clinfo
 echo "libintelocl.so" > /etc/OpenCL/vendors/intel.icd
 
 # AMD GPU/NPU depedencies (661MB)

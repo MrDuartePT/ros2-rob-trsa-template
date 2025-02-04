@@ -16,7 +16,7 @@ echo ""
 # --- Install Python and create venv ---
 ENV_DIR="$HOME/isaac_ros-dev/env_isaacsim"
 if ! command -v python3.11 &> /dev/null; then
-    sudo apt-get update -y && sudo apt-get install -y python3.11 python3.11-venv
+    sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt update && sudo apt -y install python3.11
 fi
 
 python3.11 -m venv $ENV_DIR

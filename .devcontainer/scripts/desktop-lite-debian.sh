@@ -43,7 +43,7 @@ package_list="
     libnotify4 \
     libnss3 \
     libxss1 \
-    libasound2 \
+    libasound2t64 \
     htop \
     ncdu \
     curl \

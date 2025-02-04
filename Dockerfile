@@ -3,14 +3,14 @@
 # Dockerfile for development
 # Below RUN statements are broken up to take advantage of Docker layer cache.
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 ARG MACOS_BUILD
 ARG TARGETARCH
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
 RUN echo 'Etc/UTC' > /etc/timezone \
-  && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
+    && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
 RUN apt-get update && apt-get -y upgrade \
   # Needed to curl and authorize ROS repository key. (226MB)
@@ -18,14 +18,14 @@ RUN apt-get update && apt-get -y upgrade \
   # Enable universe repositories.
   && add-apt-repository -y universe
 
-# Create a vscode user with sudo access
+# Rename default ubuntu user to vscode and give sudo access
 ARG USERNAME=vscode
 ENV USERNAME=$USERNAME
-RUN addgroup ${USERNAME}
-RUN useradd -m -s /bin/bash -g ${USERNAME} ${USERNAME}
-RUN usermod -a -G sudo ${USERNAME}
-RUN echo "${USERNAME}:${USERNAME}" | /usr/sbin/chpasswd
-RUN echo "${USERNAME}    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN usermod -l ${USERNAME} -d /home/${USERNAME} -m ubuntu && \
+    groupmod -n ${USERNAME} ubuntu && \
+    usermod -aG sudo ${USERNAME} && \
+    echo "${USERNAME}:${USERNAME}" | chpasswd && \
+    echo "${USERNAME}    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Create input user
 RUN groupadd -g 97 input1
@@ -59,8 +59,8 @@ RUN set -e && \
     dpkg -i /tmp/ros2-apt-source.deb && \
     rm /tmp/ros2-apt-source.deb
 
-# ROS Humble's support window is till 2027 (correct as of 23 Nov 2022).
-ARG ROS_DISTRO=humble 
+# ROS Jazzy's support window is till 2029 (correct as of 4 Feb 2025).
+ARG ROS_DISTRO=jazzy
 ENV ROS_DISTRO=$ROS_DISTRO
 
 # Ros-Base depedencys (625MB)
@@ -74,18 +74,19 @@ RUN apt-get update && apt-get install -y \
 
 # Setup colcon mixin and metadata
 RUN colcon mixin add default \
-  https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
-  colcon mixin update && \
-  colcon metadata add default \
-  https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
-  colcon metadata update
+    https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
+    colcon mixin update && \
+    colcon metadata add default \
+    https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
+    colcon metadata update
 
 # Install Ros Desktop Full and RQT (3119 MB)
 # Set default version of Python to be the one ROS Humble uses.
 # RQT comes with useful debugging and control tools.
 # RQT's plugin support allows for custom visualizations, tools or control panels.
 RUN apt-get update && apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-desktop-full ros-${ROS_DISTRO}-rqt* && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
+    mkdir -p /home/${USERNAME}/.config/pip && \
+    echo -e "[global]\nbreak-system-packages = true" > /home/${USERNAME}/.config/pip/pip.conf
 
 # Groot 2 (no AppImage for Arm64 use Box64)
 COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
@@ -93,19 +94,19 @@ RUN bash /tmp/scripts/groot2.sh
 
 # Install other ROS Packages (12.1MB)
 RUN apt-get update && apt-get install -y \
-  ros-${ROS_DISTRO}-py-binding-tools \
-  ros-${ROS_DISTRO}-joint-state-publisher-gui \
-  ros-${ROS_DISTRO}-urdf-launch \
-  ros-${ROS_DISTRO}-gripper-controllers \
-  ros-${ROS_DISTRO}-ros2-control \
-  ros-${ROS_DISTRO}-ros-testing \
-  ros-${ROS_DISTRO}-graph-msgs \
-  ros-${ROS_DISTRO}-rviz-visual-tools \
-  ros-${ROS_DISTRO}-urdf-tutorial \
-  ros-${ROS_DISTRO}-joint-state-broadcaster \
-  ros-${ROS_DISTRO}-joint-trajectory-controller \
-  ros-${ROS_DISTRO}-camera-calibration \
-  ros-${ROS_DISTRO}-behaviortree-cpp
+    ros-${ROS_DISTRO}-py-binding-tools \
+    ros-${ROS_DISTRO}-joint-state-publisher-gui \
+    ros-${ROS_DISTRO}-urdf-launch \
+    ros-${ROS_DISTRO}-gripper-controllers \
+    ros-${ROS_DISTRO}-ros2-control \
+    ros-${ROS_DISTRO}-ros-testing \
+    ros-${ROS_DISTRO}-graph-msgs \
+    ros-${ROS_DISTRO}-rviz-visual-tools \
+    ros-${ROS_DISTRO}-urdf-tutorial \
+    ros-${ROS_DISTRO}-joint-state-broadcaster \
+    ros-${ROS_DISTRO}-joint-trajectory-controller \
+    ros-${ROS_DISTRO}-camera-calibration \
+    ros-${ROS_DISTRO}-behaviortree-cpp
 
 # Moveit packages (114MB)
 RUN apt-get update && apt-get install -y \
@@ -199,8 +200,8 @@ WORKDIR /home/${USERNAME}
 
 # Setup colcon mixin and metadata in vscode user
 RUN colcon mixin add default \
-  https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
-  colcon mixin update && \
-  colcon metadata add default \
-  https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
-  colcon metadata update
+    https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
+    colcon mixin update && \
+    colcon metadata add default \
+    https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
+    colcon metadata update

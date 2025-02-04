@@ -6,11 +6,11 @@ name: Publish Docker image (arm64)
 
 on:
   push:
-    branches: [ humble ]
+    branches: [ jazzy ]
   schedule:
     - cron: '0 0 * * 0'
   release:
-    types: [ humble ]
+    types: [ jazzy ]
   workflow_dispatch:
     inputs:
       logLevel:

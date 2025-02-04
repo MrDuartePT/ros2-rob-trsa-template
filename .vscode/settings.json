@@ -1,16 +1,16 @@
 // VS Code configuration.
 {
   "python.autoComplete.extraPaths": [
-    "/opt/ros/humble/lib/python3.10/site-packages",
-    "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    "/opt/ros/jaazy/lib/python3.10/site-packages",
+    "/opt/ros/jaazy/local/lib/python3.10/dist-packages"
   ],
   "python.analysis.extraPaths": [
-    "/opt/ros/humble/lib/python3.10/site-packages",
-    "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    "/opt/ros/jaazy/lib/python3.10/site-packages",
+    "/opt/ros/jaazy/local/lib/python3.10/dist-packages"
   ],
   "python.terminal.activateEnvironment": false,
   "python.languageServer": "Pylance",
-  "ros.distro": "humble",
+  "ros.distro": "jaazy",
 
   // Format code & sort imports on save.
   "editor.formatOnSave": true,

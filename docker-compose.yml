@@ -12,11 +12,11 @@ volumes:
 services:
   dev:
     ## Github
-    image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:humble'
-    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:humble-macos'
+    image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:jazzy'
+    #image: 'ghcr.io/mrduartept/ros2-rob-trsa-template:jazzy-macos'
     ## Docker Hub
-    #image: 'mrduartept/ros2-rob-trsa-template:humble'
-    #image: 'mrduartept/ros2-rob-trsa-template:humble-macos'
+    #image: 'mrduartept/ros2-rob-trsa-template:jazzy'
+    #image: 'mrduartept/ros2-rob-trsa-template:jazzy-macos'
     # Can be build locally if prefered
     #build:
     #  context: .
