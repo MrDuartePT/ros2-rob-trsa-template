@@ -1,12 +1,23 @@
-name: Create Multi-Architecture Manifest
+name: Create Multi-Architecture Manifest - humble
 
 on:
   workflow_run:
     workflows:
-      - Publish Docker image (amd64)
-      - Publish Docker image (arm64)
+      - Publish Docker image - humble (amd64)
+      - Publish Docker image - humble (arm64)
     types:
       - completed
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
     permissions:
       packages: write
       contents: read

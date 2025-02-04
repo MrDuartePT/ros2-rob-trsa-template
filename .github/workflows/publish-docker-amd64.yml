@@ -2,7 +2,7 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-name: Publish Docker image (amd64)
+name: Publish Docker image - humble (amd64)
 
 on:
   push:
@@ -33,6 +33,11 @@ jobs:
       attestations: write
       id-token: write
     steps:
+      - name: Remove unnecessary files
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: Check out the repo
         uses: actions/checkout@v4
 
