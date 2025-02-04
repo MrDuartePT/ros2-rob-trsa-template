@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 # `postStart.sh` is called whenever the Dev Container starts.
 # It can be used for misc tasks (e.g., ensuring dependencies are installed).
 
-. /opt/ros/$ROS_DISTRO/setup.sh
-. /usr/share/gazebo/setup.sh
+source /opt/ros/$ROS_DISTRO/setup.bash
 
 # Due to https://github.com/microsoft/vscode-remote-release/issues/6683,
 # we have to disable git's repository trust feature.

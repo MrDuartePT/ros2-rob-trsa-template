@@ -143,29 +143,34 @@ RUN apt-get install -y \
   ros-${ROS_DISTRO}-robot-localization \
   ros-${ROS_DISTRO}-twist-mux
 
-# Some ros package are not available on AArch64 on ubuntu22.04
-# To solve that problem will clone them to internal workspace
-# On amd64 will still use the ubuntu packages
-COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
-COPY ./.devcontainer/scripts/turtlebot3-gazebo.repos /tmp/scripts/turtlebot3-gazebo.repos
-RUN bash /tmp/scripts/ros2-pkgs.sh
+# Update to Turtlebot4
+RUN apt-get install -y \
+    ros-${ROS_DISTRO}-ros-gz \
+    ros-${ROS_DISTRO}-irobot-create-nodes \
+    ros-${ROS_DISTRO}-turtlebot4-description \
+    ros-${ROS_DISTRO}-turtlebot4-msgs \
+    ros-${ROS_DISTRO}-turtlebot4-navigation \
+    ros-${ROS_DISTRO}-turtlebot4-node \
+    ros-${ROS_DISTRO}-turtlebot4-simulator \
+    ros-${ROS_DISTRO}-turtlebot4-desktop
 
 # Nvidia Isaac ROS packages
+RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key
+RUN echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" > /etc/apt/sources.list.d/isaac-ros.list
+
+RUN curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp
+RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list
+
+RUN apt update
+
+RUN apt-get install -y \
+    ros-${ROS_DISTRO}-vision-msgs \
+    ros-${ROS_DISTRO}-ackermann-msgs \
+    ros-${ROS_DISTRO}-isaac-ros-common \
+    ros-${ROS_DISTRO}-isaac-ros-argus-camera \
+    librealsense2-utils \
+    librealsense2-dev
 # Isaac SIM not included in docker image mount folder from the host
-RUN if [ "$TARGETARCH" = "amd64" ]; then \
-    curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key && \
-    echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" > /etc/apt/sources.list.d/isaac-ros.list && \
-    curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | tee /etc/apt/keyrings/librealsense.pgp && \
-    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list && \
-    apt-get update && \
-    apt-get install -y \
-      ros-${ROS_DISTRO}-vision-msgs \
-      ros-${ROS_DISTRO}-ackermann-msgs \
-      ros-${ROS_DISTRO}-isaac-ros-common \
-      ros-${ROS_DISTRO}-isaac-ros-argus-camera \
-      librealsense2-utils \
-      librealsense2-dev; \
-  fi
 
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update

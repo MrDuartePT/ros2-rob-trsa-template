@@ -1,15 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 # `postCreate.sh` is called when the Dev Container is first created.
 # It can be used for setup steps outside the Dockerfile.
 
-. /opt/ros/$ROS_DISTRO/setup.sh
-. /usr/share/gazebo/setup.sh
+source /opt/ros/$ROS_DISTRO/setup.bash
 
 # Auto-activate ROS whenever bash shell is opened.
-echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> /root/.bashrc
-echo "source /opt/ros/$ROS_DISTRO/setup.bash\nsource /usr/share/gazebo/setup.bash" >> ~/.bashrc
-echo "export TURTLEBOT3_MODEL=waffle" >> ~/.bashrc
-echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models" >> ~/.bashrc
+echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
+echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 # Source ros-internal workspace if exist (For AArch64 machines)
 if [ -d "/opt/ros-internal" ]; then
