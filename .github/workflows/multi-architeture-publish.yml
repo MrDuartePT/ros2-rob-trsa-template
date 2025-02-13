@@ -1,4 +1,4 @@
-name: Create Multi-Architecture Manifest - humble
+name: Create Multi-Architecture Manifest
 
 on:
   workflow_run:
@@ -7,6 +7,11 @@ on:
       - Publish Docker image (arm64)
     types:
       - completed
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
   workflow_dispatch:
     inputs:
       logLevel:
@@ -28,6 +33,8 @@ jobs:
   create_manifest:
     name: Create multi-arch manifest
     runs-on: ubuntu-latest
+    env:
+      ROS_DISTRO: ${{ github.ref_name }} # allow to run in other branches
     steps:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3.3.0
@@ -48,9 +55,9 @@ jobs:
       - name: Create and push manifest
         run: |
           docker buildx create --use
-          docker buildx imagetools create --tag mrduartept/ros2-rob-trsa-template:latest \
-            mrduartept/ros2-rob-trsa-template:humble-amd64 \
-            mrduartept/ros2-rob-trsa-template:humble-arm64
-          docker buildx imagetools create --tag ghcr.io/mrduartept/ros2-rob-trsa-template:latest \
-            ghcr.io/mrduartept/ros2-rob-trsa-template:humble-amd64 \
-            ghcr.io/mrduartept/ros2-rob-trsa-template:humble-arm64
+          docker buildx imagetools create --tag mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }} \
+            mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }}-amd64 \
+            mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }}-arm64
+          docker buildx imagetools create --tag ghcr.io/mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }} \
+            ghcr.io/mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }}-amd64 \
+            ghcr.io/mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }}-arm64

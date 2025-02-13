@@ -28,6 +28,10 @@ if [ -h "$WORKSPACE_ROOT/rob_ws" ] && [ -h "$WORKSPACE_ROOT/trsa_ws" ]; then
     echo "source $WORKSPACE_ROOT/trsa_ws/install/setup.bash" >> ~/.bashrc
 fi
 
+# Add useful allias
+echo 'alias ros2_cmake_pkg="ros2 pkg create --build-type ament_cmake"' >> ~/.bashrc
+echo 'alias ros2_python_pkg="ros2 pkg create --build-type ament_python"' >> ~/.bashrc
+
 # Something deleted the package indexes so we re-download them for convenience.
 sudo apt-get update
 sudo rosdep update

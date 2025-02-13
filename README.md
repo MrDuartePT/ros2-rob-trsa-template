@@ -42,6 +42,11 @@ Also remember to:
 
 Some dependencies may be unavailable from the `rosdep` package manager (check [ROS Index](https://index.ros.org)). For Python dependencies, they should be added to a `requirements.txt` created within the ROS package. The ROS package's `requirements.txt` should then be composed into the workspace's [`requirements.txt`](./requirements.txt) (example in [`requirements.txt`](./requirements.txt)). For other dependencies, they should be added to both Dockerfiles. See <https://github.com/ros/rosdistro/blob/master/CONTRIBUTING.md#rosdep-rules-contributions> with regards to adding new packages to `rosdep`.
 
+### Alias
+There are two alias that can be used to create ros packages:
+- `ros2_cmake_pkg`: Create a Ros2 C/C++ package in the current directory
+- `ros2_python_pkg`: Create a Ros2 Python package in the current directory
+
 ### VS Code Tasks
 
 For developer convenience, some common tasks are present in [`tasks.json`](./.vscode/tasks.json). Use them by opening the Command Palette and typing `task`. The following tasks are available:

@@ -27,6 +27,8 @@ jobs:
   push_to_registries:
     name: Push Docker image to multiple registries
     runs-on: ubuntu-latest
+    env:
+      ROS_DISTRO: ${{ github.ref_name }} # allow to run in other branches
     permissions:
       packages: write
       contents: read
@@ -87,8 +89,8 @@ jobs:
           context: .
           push: true
           tags: |
-            mrduartept/ros2-rob-trsa-template:humble-amd64
-            ghcr.io/mrduartept/ros2-rob-trsa-template:humble-amd64
+            mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }}-amd64
+            ghcr.io/mrduartept/ros2-rob-trsa-template:${{ env.ROS_DISTRO }}-amd64
           platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
