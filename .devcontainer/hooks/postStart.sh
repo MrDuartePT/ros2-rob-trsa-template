@@ -17,4 +17,5 @@ git submodule update --init --recursive
 # Ensure dependencies are installed.
 sudo rosdep install --ignore-src --from-path "/home/$USERNAME/rob_ws" -y
 sudo rosdep install --ignore-src --from-path "/home/$USERNAME/trsa_ws" -y
+sudo rosdep install --ignore-src --from-path "/home/$USERNAME/isaac_ros-dev" -y || continue
 sudo pip install -r "$WORKSPACE_ROOT/requirements.txt"

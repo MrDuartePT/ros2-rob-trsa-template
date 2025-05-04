@@ -154,6 +154,24 @@ COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
 COPY ./.devcontainer/scripts/turtlebot3-gazebo.repos /tmp/scripts/turtlebot3-gazebo.repos
 RUN bash /tmp/scripts/ros2-pkgs.sh
 
+# Nvidia Isaac ROS packages
+RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key
+RUN echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" > /etc/apt/sources.list.d/isaac-ros.list
+
+RUN curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp
+RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list
+
+RUN apt update
+
+RUN apt-get install -y \
+    ros-${ROS_DISTRO}-vision-msgs \
+    ros-${ROS_DISTRO}-ackermann-msgs \
+    ros-${ROS_DISTRO}-isaac-ros-common \
+    ros-${ROS_DISTRO}-isaac-ros-argus-camera \
+    librealsense2-utils \
+    librealsense2-dev
+# Isaac SIM not included in docker image mount folder from the host
+
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
 
