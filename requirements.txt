@@ -1,6 +1,17 @@
 # Compose `requirements.txt` from ROS packages into here.
 
 # Example:
-# -r ./example_module/example_pkg/requirements.txt
+
+# Install this one intel systems
+#--extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+#intel-extension-for-pytorch==2.6.10+xpu
+#oneccl_bind_pt==2.6.0+xpu
+
+torch
+torchvision
+torchaudio
 ultralytics
 numpy<2
+kconfiglib
+pyros-genmsg
+future

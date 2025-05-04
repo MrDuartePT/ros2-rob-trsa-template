@@ -24,6 +24,9 @@ services:
 
     devices:
       - "/dev/fuse:/dev/fuse"
+      # For AMD/Intel GPU
+      #- /dev/kfd 
+      #- /dev/dri
 
     # Cgroup rules to access devices (input devices, cameras, serial. Disable by default)
     #device_cgroup_rules:
@@ -91,7 +94,7 @@ services:
     # MacOS users comment out this two lines (work on linux/WSL2)
     environment:
     - DISPLAY=$DISPLAY
-    # (Optinal) Request for GPU access.
+    # (Optinal) Request for nvidia GPU access.
     #  - NVIDIA_DRIVER_CAPABILITIES=all
     #  - __NV_PRIME_RENDER_OFFLOAD=1
     #  - __GLX_VENDOR_LIBRARY_NAME=nvidia
