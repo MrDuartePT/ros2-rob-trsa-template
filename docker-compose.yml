@@ -26,6 +26,9 @@ services:
       - "/dev/fuse:/dev/fuse"
 
     volumes:
+      # MacOS users remove this two lines (work on linux/WSL2)
+      # `xhost local:+vscode` need to be run in linux/WSL2 terminal
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # Store VS Code extensions in named volume to prevent re-downloads.
       - vscode-extensions:/root/.vscode-server
       # Store pip wheel cache in named volume to prevent re-downloads.
@@ -70,8 +73,10 @@ services:
 
     # Override default command so things don't shut down after the process ends.
     command: /bin/sh -c "while sleep 1000; do :; done"
+    # MacOS users comment out this two lines (work on linux/WSL2)
+    environment:
+    - DISPLAY=$DISPLAY
     # (Optinal) Request for GPU access.
-    #environment:
     #  - NVIDIA_DRIVER_CAPABILITIES=all
     #  - __NV_PRIME_RENDER_OFFLOAD=1
     #  - __GLX_VENDOR_LIBRARY_NAME=nvidia
