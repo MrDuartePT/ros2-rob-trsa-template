@@ -97,3 +97,5 @@ jobs:
           platforms: linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            MACOS_BUILD=false
