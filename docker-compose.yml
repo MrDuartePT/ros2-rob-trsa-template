@@ -25,6 +25,13 @@ services:
     devices:
       - "/dev/fuse:/dev/fuse"
 
+    # Cgroup rules to access devices (input devices, cameras, serial. Disable by default)
+    #device_cgroup_rules:
+      #- 'c 13:* rmw'
+      #- 'c 189:* rmw'
+      #- 'c 81:* rmw'
+      #- 'c 166:* rmw' # For serial devices
+
     volumes:
       # MacOS users remove this two lines (work on linux/WSL2)
       # `xhost local:+vscode` need to be run in linux/WSL2 terminal
@@ -35,6 +42,14 @@ services:
       - pip-whl-cache:/root/.cache/pip
       # Allow access to Docker daemon for VS Code Docker extension to work inside container.
       - /var/run/docker.sock:/var/run/docker.sock
+
+      # Allow access to devices (input devices, cameras, serial. Disable by default)
+      #- /dev/input:/dev/input
+      #- /dev/bus/usb:/dev/bus/usb
+      #- /dev:/dev # For serial devices
+      #- /dev/video0:/dev/video0
+      #- /dev/video1:/dev/video1
+
       # Mount point for `./rob_ws` and `./trsa_ws` folder.
       ## Linux/MacOs Mount
       - $HOME/Documents/FCT/Ros2/rob_ws:/home/vscode/rob_ws
