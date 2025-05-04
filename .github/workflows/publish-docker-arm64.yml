@@ -2,7 +2,7 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-name: Publish Docker image - humble (arm64)
+name: Publish Docker image (arm64)
 
 on:
   push:
@@ -40,6 +40,9 @@ jobs:
 
       - name: Check out the repo
         uses: actions/checkout@v4
+
+      - name: Set MACOS_BUILD environment variable
+        run: echo "MACOS_BUILD=false" >> $GITHUB_ENV
 
       #- name: Create cache file
       #  run: |

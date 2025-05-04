@@ -3,8 +3,8 @@ name: Create Multi-Architecture Manifest - humble
 on:
   workflow_run:
     workflows:
-      - Publish Docker image - humble (amd64)
-      - Publish Docker image - humble (arm64)
+      - Publish Docker image (amd64)
+      - Publish Docker image (arm64)
     types:
       - completed
   workflow_dispatch:

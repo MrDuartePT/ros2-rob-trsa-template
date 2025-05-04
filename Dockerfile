@@ -3,18 +3,9 @@
 # Dockerfile for development
 # Below RUN statements are broken up to take advantage of Docker layer cache.
 
-# (OPTION) Use base Ubuntu 22.04 if a Nvidia GPU is unavailable.
-# FROM ubuntu:22.04
-FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
-ARG TARGETARCH
-RUN if [ -z "$BUILDARCH" ]; then \
-      BUILDARCH=$(dpkg --print-architecture); \
-      echo "Detected architecture: $BUILDARCH"; \
-    else \
-      echo "Provided architecture: $BUILDARCH"; \
-    fi && \
-    echo "$BUILDARCH" > /tmp/buildarch
-
+FROM ubuntu:22.04
+ARG MACOS_BUILD
+ENV TARGETARCH=${TARGETARCH}
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV LANG="en_US.UTF-8" LC_ALL="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
@@ -41,15 +32,26 @@ RUN echo "${USERNAME}    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN groupadd -g 97 input1
 RUN usermod -a -G input1 ${USERNAME}
 
-# Add VNC server & noVNC web app for debugging and control.
+ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:"
+ENV VNC_RESOLUTION="1920x1080x32"
+ENV VNC_DPI="96"
+ENV VNC_PORT="5901"
+ENV NOVNC_PORT="6080"
+ENV DISPLAY=":1"
+
 COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
-ENV DBUS_SESSION_BUS_ADDRESS="autolaunch:" \
-  VNC_RESOLUTION="1920x1080x32" \
-  VNC_DPI="96" \
-  VNC_PORT="5901" \
-  NOVNC_PORT="6080" \
-  DISPLAY=":1"
-RUN bash /tmp/scripts/desktop-lite-debian.sh vscode vscode
+COPY ./.devcontainer/scripts/gpu-deps.sh /tmp/scripts/gpu-deps.sh
+COPY ./.devcontainer/scripts/entrypoint.sh /tmp/scripts/entrypoint.sh
+
+# Add VNC server & noVNC web app for enviroment in MacOS
+RUN if [ "$MACOS_BUILD" = "true" ]; then \
+      bash /tmp/scripts/desktop-lite-debian.sh vscode vscode; \
+fi
+
+# Install GPU dependencies
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+      bash /tmp/scripts/gpu-deps.sh; \
+fi
 
 # Enable openCL support (OpenCV uses it for hardware acceleration).
 RUN mkdir -p /etc/OpenCL/vendors && \
@@ -148,7 +150,6 @@ RUN apt-get install -y \
 # Some ros package are not available on AArch64 on ubuntu22.04
 # To solve that problem will clone them to internal workspace
 # On amd64 will still use the ubuntu packages
-ENV TARGETARCH=${TARGETARCH}
 COPY ./.devcontainer/scripts/ros2-pkgs.sh /tmp/scripts/ros2-pkgs.sh
 COPY ./.devcontainer/scripts/turtlebot3-gazebo.repos /tmp/scripts/turtlebot3-gazebo.repos
 RUN bash /tmp/scripts/ros2-pkgs.sh
@@ -165,13 +166,8 @@ RUN apt-get update \
   && apt-get install -y docker-ce-cli \
   && pip install docker-compose
 
-# Needed for Dev Container lifecycle hooks to run.
-COPY ./.devcontainer /tmp/.devcontainer
-
-ENTRYPOINT [ \
-  # VNC entrypoint
-  "/usr/local/share/desktop-init.sh" \
-  ]
+RUN chmod +x /tmp/scripts/entrypoint.sh
+ENTRYPOINT ["/tmp/scripts/entrypoint.sh"]
 
 # Make /bin/sh launch bash instead.
 ENV ENV=\$HOME/.shrc

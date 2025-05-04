@@ -2,7 +2,7 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-name: Publish Docker image (amd64)
+name: Publish Docker image (macos)
 
 on:
   push:
@@ -26,7 +26,7 @@ on:
 jobs:
   push_to_registries:
     name: Push Docker image to multiple registries
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     permissions:
       packages: write
       contents: read
@@ -40,6 +40,9 @@ jobs:
 
       - name: Check out the repo
         uses: actions/checkout@v4
+
+      - name: Set MACOS_BUILD environment variable
+        run: echo "MACOS_BUILD=true" >> $GITHUB_ENV
 
       #- name: Create cache file
       #  run: |
@@ -87,8 +90,8 @@ jobs:
           context: .
           push: true
           tags: |
-            mrduartept/ros2-rob-trsa-template:humble-amd64
-            ghcr.io/mrduartept/ros2-rob-trsa-template:humble-amd64
-          platforms: linux/amd64
+            mrduartept/ros2-rob-trsa-template:humble-macos
+            ghcr.io/mrduartept/ros2-rob-trsa-template:humble-macos
+          platforms: linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
