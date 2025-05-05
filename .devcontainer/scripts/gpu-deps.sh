@@ -44,6 +44,7 @@ apt-get update && apt-get install -y \
     libnccl-dev \
     libcudnn9-cuda-12 \
     libcudnn9-dev-cuda-12 \
+    cuda-toolkit-12-8 \
     #cuda-nsight-compute-12-8 (This 8gb in size install locally if needed)
 
 echo "/usr/local/cuda/lib64" >> /etc/ld.so.conf.d/nvidia.conf

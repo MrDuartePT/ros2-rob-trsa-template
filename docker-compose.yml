@@ -68,6 +68,7 @@ services:
       #- $HOME/.cache/warp/:/home/vscode/.cache/warp:rw
       #- $HOME/.cache/ov/:/home/vscode/.cache/ov:rw
       #- /opt/isaac:/opt/isaac:rw
+      #- /opt/TensorRT:/opt/TensorRT:rw
       #- /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r
 
       # Better process handling by using a process management system (tini).
