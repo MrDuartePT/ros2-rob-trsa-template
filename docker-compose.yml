@@ -95,14 +95,17 @@ services:
     environment:
     - DISPLAY=$DISPLAY
     # (Optinal) Request for nvidia GPU access.
-    #  - NVIDIA_DRIVER_CAPABILITIES=all
-    #  - __NV_PRIME_RENDER_OFFLOAD=1
-    #  - __GLX_VENDOR_LIBRARY_NAME=nvidia
+    #- NVIDIA_VISIBLE_DEVICES=all
+    #- NVIDIA_DRIVER_CAPABILITIES=all
+    #- __NV_PRIME_RENDER_OFFLOAD=1
+    #- __GLX_VENDOR_LIBRARY_NAME=nvidia
     #deploy:
     #  resources:
     #    reservations:
     #      devices:
-    #      - capabilities: [ gpu ]
+    #        - driver: nvidia
+    #          count: all
+    #          capabilities: [gpu]
 
     # Example of setup for ROS to be able to communicate across containers.
     # Is unnecessary if using a single container.
