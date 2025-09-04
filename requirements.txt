@@ -3,6 +3,7 @@
 #--extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 #intel-extension-for-pytorch==2.6.10+xpu
 #oneccl_bind_pt==2.6.0+xpu
+termcolor
 torch
 torchvision
 torchaudio

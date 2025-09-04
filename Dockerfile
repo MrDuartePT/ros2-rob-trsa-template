@@ -86,7 +86,8 @@ RUN colcon mixin add default \
 # RQT's plugin support allows for custom visualizations, tools or control panels.
 RUN apt-get update && apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-desktop-full ros-${ROS_DISTRO}-rqt* && \
     mkdir -p /home/${USERNAME}/.config/pip && \
-    echo -e "[global]\nbreak-system-packages = true" > /home/${USERNAME}/.config/pip/pip.conf
+    printf "[global]\nbreak-system-packages = true\n" > /home/${USERNAME}/.config/pip/pip.conf && \
+    chown vscode:vscode /home/${USERNAME}/.config/pip/pip.conf
 
 # Groot 2 (no AppImage for Arm64 use Box64)
 COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
@@ -121,7 +122,8 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-moveit-simple-controller-manager \
   ros-${ROS_DISTRO}-moveit-servo \
   ros-${ROS_DISTRO}-moveit-visual-tools \
-  ros-${ROS_DISTRO}-moveit-planners
+  ros-${ROS_DISTRO}-moveit-planners \
+  ros-${ROS_DISTRO}-moveit-py
 
 # NaV2 packages (402MB)
 RUN apt-get update && apt-get install -y \
@@ -155,18 +157,23 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-turtlebot4-desktop
 
 # Nvidia Isaac ROS and Intel Realsense packages (291MB)
-# Isaac SIM not included in docker image (can be install using pip requriment file)
-RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key && \
-    echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" > /etc/apt/sources.list.d/isaac-ros.list && \
-    curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp && \
-    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list && \
-    apt update && apt-get install -y \
+# Isaac SIM not included in docker image (can be install using pip requriment file
+RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key
+RUN echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-4 $(lsb_release -cs) main" > /etc/apt/sources.list.d/isaac-ros.list
+
+RUN curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp
+RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list
+
+RUN apt update && apt-get install -y \
     ros-${ROS_DISTRO}-vision-msgs \
     ros-${ROS_DISTRO}-ackermann-msgs \
     ros-${ROS_DISTRO}-isaac-ros-common \
-    ros-${ROS_DISTRO}-isaac-ros-argus-camera \
-    librealsense2-utils \
-    librealsense2-dev
+    isaac-ros-cli
+
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+    apt update && apt-get install -y librealsense2-utils librealsense2-dev; \
+fi
+# Isaac SIM not included in docker image mount folder from the host
 
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
@@ -174,7 +181,7 @@ RUN rosdep init && rosdep update
 # Install Docker CLI tools (not including daemon).
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
   && add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) stable" && \
-  apt-get update && apt-get install -y docker-ce-cli && pip install docker-compose
+  apt-get update && apt-get install -y docker-ce-cli docker-compose-plugin
 
 RUN if [ "$MACOS_BUILD" = "true" ]; then \
       printf '%s\n' '#!/bin/bash' 'set -e' 'exec /usr/local/share/desktop-init.sh "$@"' > /entrypoint.sh; \

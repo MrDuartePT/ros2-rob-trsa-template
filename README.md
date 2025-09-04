@@ -16,6 +16,24 @@ Template for ROS2 workspace using [VS Code Dev Containers](https://code.visualst
   - https://hub.docker.com/r/mrduartept/ros2-rob-trsa-template
   - https://github.com/mrduartept/ros2-rob-trsa-template/pkgs/container/ros2-rob-trsa-template
 
+## Distrobox users 
+This image was confirmed working by a user.
+
+If you prefer to use it that way, just run the commands below.
+
+Note: --root is added to the command, but depending on your usage, it might not be needed.
+
+For NVIDIA Users:
+```bash
+# Change the second --volume for your ros distro folders
+distrobox create --root -i mrduartept/ros2-rob-trsa-template:humble --yes --nvidia --volume /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r --volume $HOME/Documents/ros-workspaces:$HOME/Documents/ros-workspaces:rw
+```
+For Intel/AMD Users
+```bash
+# Change the second --volume for your ros distro folders
+distrobox create --root -i mrduartept/ros2-rob-trsa-template:humble --yes  --volume /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r --volume $HOME/Documents/ros-workspaces:$HOME/Documents/ros-workspaces:rw
+```
+
 ## Table of Contents
 
 - [Mount Point `./rob_ws` and `./trsa_ws`](#mount-point-data)
