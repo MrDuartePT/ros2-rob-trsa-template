@@ -53,6 +53,9 @@ services:
       #- /dev/video0:/dev/video0
       #- /dev/video1:/dev/video1
 
+      # For working vulkan driver inside the container on Linux
+      #- /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r
+
       # Mount point for `./rob_ws` and `./trsa_ws` folder.
       ## Linux/MacOs Mount
       - $HOME/Documents/FCT/Ros2/rob_ws:/home/vscode/rob_ws
@@ -63,15 +66,15 @@ services:
       #- '$USERPROFILE\Documents\FCT\Ros2\trsa_ws:/home/vscode/trsa_ws'
       #- '$USERPROFILE\Documents\FCT\Ros2\trsa_ws\.gazebo-cache:/home/vscode/.gazebo'
 
-      # Mount points for ISAAC ROS (Only Linux)
+      # Mount points for ISAAC ROS (Linux only, might work with WSL)
       #- $HOME/Documents/FCT/Ros2/isaac_ros-dev:/home/vscode/isaac_ros-dev
       #- $HOME/.cache/warp/:/home/vscode/.cache/warp:rw
       #- $HOME/.cache/ov/:/home/vscode/.cache/ov:rw
-      #- /opt/isaac:/opt/isaac:rw
+      # Since TensorRT is about 10gb is not provided with the image.
+      # If need can be download from the nvidia developer website or install in the container afterwards
       #- /opt/TensorRT:/opt/TensorRT:rw
-      #- /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r
 
-      # Better process handling by using a process management system (tini).
+    # Better process handling by using a process management system (tini).
     init: true
     # Larger shared memory for VNC & ROS.
     shm_size: 1gb

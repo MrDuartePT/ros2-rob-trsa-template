@@ -15,3 +15,8 @@ numpy<2
 kconfiglib
 pyros-genmsg
 future
+
+# For issaclab and issacsim (optional)
+#--extra-index-url https://pypi.nvidia.com
+#isaaclab[isaacsim,all]==2.1.0
+#isaacsim[all,extscache]==4.5.0
