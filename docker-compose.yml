@@ -60,11 +60,13 @@ services:
       ## Linux/MacOs Mount
       - $HOME/Documents/FCT/Ros2/rob_ws:/home/vscode/rob_ws
       - $HOME/Documents/FCT/Ros2/trsa_ws:/home/vscode/trsa_ws
-      - $HOME/Documents/FCT/Ros2/trsa_ws/.gazebo-cache:/home/vscode/.gazebo
+      - $HOME/Documents/FCT/Ros2/.gazebo-cache:/home/vscode/.gazebo
+      - $HOME/Documents/FCT/Ros2/.ignition-cache:/home/vscode/.ignition
       ## Windows Mount
       #- '$USERPROFILE\Documents\FCT\Ros2\rob_ws:/home/vscode/rob_ws'
       #- '$USERPROFILE\Documents\FCT\Ros2\trsa_ws:/home/vscode/trsa_ws'
-      #- '$USERPROFILE\Documents\FCT\Ros2\trsa_ws\.gazebo-cache:/home/vscode/.gazebo'
+      #- '$USERPROFILE\Documents\FCT\Ros2\.gazebo-cache:/home/vscode/.gazebo'
+      #- '$USERPROFILE\Documents\FCT\Ros2\.ignition-cache:/home/vscode/.ignition'
 
       # Mount points for ISAAC ROS (Linux only, might work with WSL)
       #- $HOME/Documents/FCT/Ros2/isaac_ros-dev:/home/vscode/isaac_ros-dev
