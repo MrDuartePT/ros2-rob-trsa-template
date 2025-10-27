@@ -7,6 +7,8 @@ source /opt/ros/$ROS_DISTRO/setup.bash
 # Auto-activate ROS whenever bash shell is opened.
 echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
 echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+echo 'PATH=$PATH:/usr/local/bin' >> /root/.bashrc
+echo 'PATH=$PATH:/usr/local/bin' >> ~/.bashrc
 
 # Source ros-internal workspace if exist (For AArch64 machines)
 if [ -d "/opt/ros-internal" ]; then
@@ -29,9 +31,6 @@ if [ -d "/home/$USERNAME/isaac_ros-dev" ]; then
     ln -sf /home/$USERNAME/isaac_ros-dev "$WORKSPACE_ROOT/"
     mkdir -p /home/$USERNAME/isaac_ros-dev || continue
     echo "export ISAAC_ROS_WS=/home/$USERNAME/isaac_ros-dev" >> ~/.bashrc
-    echo "export ISAACSIM_PATH='/opt/isaac/isaacsim'" >> ~/.bashrc
-    echo "export ISAACSIM_PYTHON_EXE='/opt/isaac/isaacsim/python.sh'" >> ~/.bashrc
-    echo "alias isaacsim='/opt/isaac/isaacsim/isaac-sim.sh'" >> ~/.bashrc
 fi
 
 # Add useful allias

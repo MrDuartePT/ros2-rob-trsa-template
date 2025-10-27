@@ -13,9 +13,8 @@ RUN echo 'Etc/UTC' > /etc/timezone \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
 RUN apt-get update && apt-get -y upgrade \
-  # Needed to curl and authorize ROS repository key.
-  && apt-get install -y curl wget sudo gnupg lsb-release software-properties-common \
-  && apt-get install -y git \
+  # Needed to curl and authorize ROS repository key. (226MB)
+  && apt-get install -y git curl wget sudo gnupg lsb-release software-properties-common \
   # Enable universe repositories.
   && add-apt-repository -y universe
 
@@ -39,32 +38,33 @@ ENV VNC_PORT="5901"
 ENV NOVNC_PORT="6080"
 ENV DISPLAY=":1"
 
-COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
-COPY ./.devcontainer/scripts/gpu-deps.sh /tmp/scripts/gpu-deps.sh
-COPY ./.devcontainer/scripts/entrypoint.sh /tmp/scripts/entrypoint.sh
-
 # Add VNC server & noVNC web app for enviroment in MacOS
+COPY ./.devcontainer/scripts/desktop-lite-debian.sh /tmp/scripts/desktop-lite-debian.sh
 RUN if [ "$MACOS_BUILD" = "true" ]; then \
-      bash /tmp/scripts/desktop-lite-debian.sh vscode vscode; \
+    bash /tmp/scripts/desktop-lite-debian.sh vscode vscode; \
+    rm /tmp/scripts/desktop-lite-debian.sh; \
 fi
 
 # Install GPU dependencies
+COPY ./.devcontainer/scripts/gpu-deps.sh /tmp/scripts/gpu-deps.sh
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
-      bash /tmp/scripts/gpu-deps.sh; \
+    bash /tmp/scripts/gpu-deps.sh; \
+    rm /tmp/scripts/gpu-deps.sh; \
 fi
 
 # Install Ros apt repository package
 RUN set -e && \
     ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}') && \
     curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" && \
-    dpkg -i /tmp/ros2-apt-source.deb
+    dpkg -i /tmp/ros2-apt-source.deb && \
+    rm /tmp/ros2-apt-source.deb
 
 # ROS Humble's support window is till 2027 (correct as of 23 Nov 2022).
 ARG ROS_DISTRO=humble 
 ENV ROS_DISTRO=$ROS_DISTRO
 
-RUN apt-get update
-RUN apt-get install -y \
+# Ros-Base depedencys (625MB)
+RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-ros-base \
   python3-rosdep \
   python3-colcon-common-extensions \
@@ -80,21 +80,18 @@ RUN colcon mixin add default \
   https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
   colcon metadata update
 
-# Install Ros Desktop Full
-RUN apt-get update && apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-desktop-full
-
+# Install Ros Desktop Full and RQT (3119 MB)
 # Set default version of Python to be the one ROS Humble uses.
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
-
 # RQT comes with useful debugging and control tools.
 # RQT's plugin support allows for custom visualizations, tools or control panels.
-RUN apt-get install -y ros-${ROS_DISTRO}-rqt*
+RUN apt-get update && apt-get install -y --no-install-recommends ros-${ROS_DISTRO}-desktop-full ros-${ROS_DISTRO}-rqt* && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 
 # Groot 2 (no AppImage for Arm64 use Box64)
 COPY ./.devcontainer/scripts/groot2.sh /tmp/scripts/groot2.sh
 RUN bash /tmp/scripts/groot2.sh
 
-# Install other ROS Packages
+# Install other ROS Packages (12.1MB)
 RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-py-binding-tools \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
@@ -110,8 +107,8 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-camera-calibration \
   ros-${ROS_DISTRO}-behaviortree-cpp
 
-# Moveit packages
-RUN apt-get install -y \
+# Moveit packages (114MB)
+RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-moveit \
   ros-${ROS_DISTRO}-moveit-common \
   ros-${ROS_DISTRO}-moveit-resources \
@@ -125,8 +122,8 @@ RUN apt-get install -y \
   ros-${ROS_DISTRO}-moveit-visual-tools \
   ros-${ROS_DISTRO}-moveit-planners
 
-# Nax2 packages
-RUN apt-get install -y \ 
+# NaV2 packages (402MB)
+RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-nav2-controller \
   ros-${ROS_DISTRO}-nav2-smoother \
   ros-${ROS_DISTRO}-nav2-behaviors \
@@ -145,8 +142,8 @@ RUN apt-get install -y \
   ros-${ROS_DISTRO}-robot-localization \
   ros-${ROS_DISTRO}-twist-mux
 
-# Update to Turtlebot4
-RUN apt-get install -y \
+# Update to Turtlebot4 (79.2MB)
+RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-ros-gz \
     ros-${ROS_DISTRO}-irobot-create-nodes \
     ros-${ROS_DISTRO}-turtlebot4-description \
@@ -156,38 +153,35 @@ RUN apt-get install -y \
     ros-${ROS_DISTRO}-turtlebot4-simulator \
     ros-${ROS_DISTRO}-turtlebot4-desktop
 
-# Nvidia Isaac ROS packages
-RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key
-RUN echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" > /etc/apt/sources.list.d/isaac-ros.list
-
-RUN curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp
-RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list
-
-RUN apt update
-
-RUN apt-get install -y \
+# Nvidia Isaac ROS and Intel Realsense packages (291MB)
+# Isaac SIM not included in docker image (can be install using pip requriment file)
+RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key && \
+    echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" > /etc/apt/sources.list.d/isaac-ros.list && \
+    curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp && \
+    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list && \
+    apt update && apt-get install -y \
     ros-${ROS_DISTRO}-vision-msgs \
     ros-${ROS_DISTRO}-ackermann-msgs \
     ros-${ROS_DISTRO}-isaac-ros-common \
     ros-${ROS_DISTRO}-isaac-ros-argus-camera \
     librealsense2-utils \
     librealsense2-dev
-# Isaac SIM not included in docker image mount folder from the host
 
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
 
-# Curl key to authorize Docker repository.
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
-  && add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) stable"
-
 # Install Docker CLI tools (not including daemon).
-RUN apt-get update \
-  && apt-get install -y docker-ce-cli \
-  && pip install docker-compose
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - 2>/dev/null \
+  && add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) stable" && \
+  apt-get update && apt-get install -y docker-ce-cli && pip install docker-compose
 
-RUN chmod +x /tmp/scripts/entrypoint.sh
-ENTRYPOINT ["/tmp/scripts/entrypoint.sh"]
+RUN if [ "$MACOS_BUILD" = "true" ]; then \
+      printf '%s\n' '#!/bin/bash' 'set -e' 'exec /usr/local/share/desktop-init.sh "$@"' > /entrypoint.sh; \
+    else \
+      printf '%s\n' '#!/bin/bash' 'set -e' 'exec "$@"' > /entrypoint.sh; \
+    fi && \
+    chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Make /bin/sh launch bash instead.
 ENV ENV=\$HOME/.shrc
