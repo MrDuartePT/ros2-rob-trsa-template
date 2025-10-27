@@ -47,6 +47,9 @@ There are two alias that can be used to create ros packages:
 - `ros2_cmake_pkg`: Create a Ros2 C/C++ package in the current directory
 - `ros2_python_pkg`: Create a Ros2 Python package in the current directory
 
+There also alias to auto-load the Isaac Sim and Issac Lab python envrioment, called `isaacload`
+This enviroment is only created `isaac_ros-dev` folder is mounted in the container, look at [`postCreate.sh`](./.devcontainer/hooks/postCreate.sh) and [`issaclab-pyenv.sh`](./.devcontainer/scripts/issaclab-pyenv.sh)
+
 ### VS Code Tasks
 
 For developer convenience, some common tasks are present in [`tasks.json`](./.vscode/tasks.json). Use them by opening the Command Palette and typing `task`. The following tasks are available:

@@ -1,12 +1,8 @@
 # Compose `requirements.txt` from ROS packages into here.
-
-# Example:
-
-# Install this one intel systems
+# Install this intel systems
 #--extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 #intel-extension-for-pytorch==2.6.10+xpu
 #oneccl_bind_pt==2.6.0+xpu
-
 torch
 torchvision
 torchaudio
@@ -15,8 +11,3 @@ numpy<2
 kconfiglib
 pyros-genmsg
 future
-
-# For issaclab and issacsim (optional)
-#--extra-index-url https://pypi.nvidia.com
-#isaaclab[isaacsim,all]==2.1.0
-#isaacsim[all,extscache]==4.5.0

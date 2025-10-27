@@ -14,7 +14,16 @@ git config --global safe.directory "*"
 git submodule update --init --recursive
 
 # Ensure dependencies are installed.
-sudo rosdep install --ignore-src --from-path "/home/$USERNAME/rob_ws" -y
-sudo rosdep install --ignore-src --from-path "/home/$USERNAME/trsa_ws" -y
-sudo rosdep install --ignore-src --from-path "/home/$USERNAME/isaac_ros-dev" -y || continue
-sudo pip install -r "$WORKSPACE_ROOT/requirements.txt"
+rosdep install --ignore-src --from-path "/home/$USERNAME/rob_ws" -y
+rosdep install --ignore-src --from-path "/home/$USERNAME/trsa_ws" -y
+rosdep install --ignore-src --from-path "/home/$USERNAME/isaac_ros-dev" -y || continue
+pip install -r "$WORKSPACE_ROOT/requirements.txt"
+
+# Install IsaacLab and IsaacSim if isaac_ros-dev exist
+if [ -d "/home/$USERNAME/isaac_ros-dev" ]; then
+    ln -sf /home/$USERNAME/isaac_ros-dev "$WORKSPACE_ROOT/"
+    echo "export ISAAC_ROS_WS=/home/$USERNAME/isaac_ros-dev" >> ~/.bashrc
+    echo "Installing Isaac Sim and Isaac Lab"
+    $WORKSPACE_ROOT/.devcontainer/scripts/issaclab-pyenv.sh
+    echo 'alias issacload="source ~/isaac_ros-dev/env_isaacsim/bin/activate"' >> ~/.bashrc
+fi
