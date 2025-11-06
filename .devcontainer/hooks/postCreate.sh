@@ -27,6 +27,15 @@ if [ -h "$WORKSPACE_ROOT/rob_ws" ] && [ -h "$WORKSPACE_ROOT/trsa_ws" ]; then
     echo "source $WORKSPACE_ROOT/trsa_ws/install/setup.bash" >> ~/.bashrc
 fi
 
+# Install IsaacLab and IsaacSim if isaac_ros-dev exist
+if [ -h "/home/$USERNAME/isaac_ros-dev" ]; then
+    ln -sf /home/$USERNAME/isaac_ros-dev "$WORKSPACE_ROOT/"
+    echo "export ISAAC_ROS_WS=/home/$USERNAME/isaac_ros-dev" >> ~/.bashrc
+    echo "Installing Isaac Sim and Isaac Lab"
+    $WORKSPACE_ROOT/.devcontainer/scripts/issaclab-pyenv.sh
+    echo 'alias issacload="source ~/isaac_ros-dev/env_isaacsim/bin/activate"' >> ~/.bashrc
+fi
+
 # Add useful allias
 echo 'alias ros2_cmake_pkg="ros2 pkg create --build-type ament_cmake"' >> ~/.bashrc
 echo 'alias ros2_python_pkg="ros2 pkg create --build-type ament_python"' >> ~/.bashrc
