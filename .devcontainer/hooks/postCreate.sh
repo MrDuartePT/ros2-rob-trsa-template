@@ -28,12 +28,11 @@ if [ -h "$WORKSPACE_ROOT/rob_ws" ] && [ -h "$WORKSPACE_ROOT/trsa_ws" ]; then
 fi
 
 # Install IsaacLab and IsaacSim if isaac_ros-dev exist
-if [ -h "/home/$USERNAME/isaac_ros-dev" ]; then
+if [ -d "/home/$USERNAME/isaac_ros-dev" ]; then
     ln -sf /home/$USERNAME/isaac_ros-dev "$WORKSPACE_ROOT/"
     echo "export ISAAC_ROS_WS=/home/$USERNAME/isaac_ros-dev" >> ~/.bashrc
     echo "Installing Isaac Sim and Isaac Lab"
-    $WORKSPACE_ROOT/.devcontainer/scripts/issaclab-pyenv.sh
-    echo 'alias issacload="source ~/isaac_ros-dev/env_isaacsim/bin/activate"' >> ~/.bashrc
+    sudo -u vscode bash -c $WORKSPACE_ROOT/.devcontainer/scripts/issaclab-pyenv.sh
 fi
 
 # Add useful allias
