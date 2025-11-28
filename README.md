@@ -1,4 +1,15 @@
-# ros2-rob-trsa-template
+[![Docker image (amd64)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-amd64.yml/badge.svg)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-amd64.yml)
+[![Docker image (arm64)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-arm64.yml/badge.svg)](https://github.com/MrDuartePT/ros2-rob-trsa-template/actions/workflows/publish-docker-arm64.yml)
+[![Docker Image Size](https://badgen.net/docker/size/mrduartept/ros2-rob-trsa-template/humble?icon=docker&label=image%20size)](https://hub.docker.com/r/mrduartept/ros2-rob-trsa-template/)
+[![Docker Pulls](https://badgen.net/docker/pulls/mrduartept/ros2-rob-trsa-template?icon=docker&label=pulls)](https://hub.docker.com/r/mrduartept/ros2-rob-trsa-template/)
+
+---
+⚠️ Deprecation
+
+This image is entering soft deprecation.
+It remains usable, but manitenace is slowing down, pls move to the [jazzy](https://github.com/MrDuartePT/ros2-rob-trsa-template/tree/jazzy) image.
+
+---
 
 Template for ROS2 workspace using [VS Code Dev Containers](https://code.visualstudio.com/docs/remote/containers) & [Docker Compose](https://docs.docker.com/compose/).
 
@@ -10,6 +21,22 @@ Template for ROS2 workspace using [VS Code Dev Containers](https://code.visualst
 - By default the docker-compose.yaml will use images publish to Github/Docker Hub (same version of master)
   - https://hub.docker.com/r/mrduartept/ros2-rob-trsa-template
   - https://github.com/mrduartept/ros2-rob-trsa-template/pkgs/container/ros2-rob-trsa-template
+
+## Distrobox users 
+This image was confirmed working by a user.
+
+If you prefer to use it that way, just run the commands below.
+
+For NVIDIA Users:
+```bash
+# Change the second --volume for your ros distro folders
+distrobox create --name ros-humble -i mrduartept/ros2-rob-trsa-template:humble --yes --nvidia --volume /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r --volume $HOME/Documents/ros-workspaces:$HOME/Documents/ros-workspaces:rw
+```
+For Intel/AMD Users
+```bash
+# Change the second --volume for your ros distro folders
+distrobox create --name ros-humble -i mrduartept/ros2-rob-trsa-template:humble --yes --volume /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:r --volume $HOME/Documents/ros-workspaces:$HOME/Documents/ros-workspaces:rw
+```
 
 ## Table of Contents
 
