@@ -24,7 +24,7 @@ source "$ENV_DIR/bin/activate"
 
 echo "[INFO] Installing Isaac Sim and Isaac Lab dependencies..."
 pip install --upgrade pip
-pip install isaaclab[isaacsim,all]==2.2.0 --extra-index-url https://pypi.nvidia.com
+pip install isaaclab[isaacsim,all]==2.3.2.post1 --extra-index-url https://pypi.nvidia.com
 pip install -U torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu129
 pip install git+https://github.com/isaac-sim/rl_games.git@python3.11
 

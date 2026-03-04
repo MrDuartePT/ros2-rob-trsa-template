@@ -158,22 +158,18 @@ RUN apt-get update && apt-get install -y \
 
 # Nvidia Isaac ROS and Intel Realsense packages (291MB)
 # Isaac SIM not included in docker image (can be install using pip requriment file
-RUN curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key
-RUN echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-4 $(lsb_release -cs) main" > /etc/apt/sources.list.d/isaac-ros.list
+RUN if [ "$MACOS_BUILD" = "false" ]; then \
+    curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key && \
+    echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-4 $(lsb_release -cs) main" > /etc/apt/sources.list.d/isaac-ros.list && \
+    curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp && \
+    echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list && \
+    apt update && apt-get install -y libnvvpi4 vpi4-dev vpi4-samples && \ 
+    apt-get install -y ros-${ROS_DISTRO}-vision-msgs ros-${ROS_DISTRO}-ackermann-msgs ros-${ROS_DISTRO}-isaac-ros-common isaac-ros-cli; \
+fi
 
-RUN curl -sSL https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp
-RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" > /etc/apt/sources.list.d/librealsense-intel.list
-
-RUN apt update && apt-get install -y \
-    ros-${ROS_DISTRO}-vision-msgs \
-    ros-${ROS_DISTRO}-ackermann-msgs \
-    ros-${ROS_DISTRO}-isaac-ros-common \
-    isaac-ros-cli
-
-RUN if [ "$TARGETARCH" = "amd64" ]; then \
+RUN if [ && "$TARGETARCH" = "amd64" ]; then \
     apt update && apt-get install -y librealsense2-utils librealsense2-dev; \
 fi
-# Isaac SIM not included in docker image mount folder from the host
 
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
