@@ -5,8 +5,8 @@
 source /opt/ros/$ROS_DISTRO/setup.bash
 
 # Auto-activate ROS whenever bash shell is opened.
-echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
-echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+#echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
+#echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 echo 'PATH=$PATH:/usr/local/bin' >> /root/.bashrc
 echo 'PATH=$PATH:/usr/local/bin' >> ~/.bashrc
 
@@ -25,14 +25,6 @@ if [ -h "$WORKSPACE_ROOT/rob_ws" ] && [ -h "$WORKSPACE_ROOT/trsa_ws" ]; then
     source $WORKSPACE_ROOT/trsa_ws/install/setup.bash
     echo "source $WORKSPACE_ROOT/rob_ws/install/setup.bash" >> ~/.bashrc
     echo "source $WORKSPACE_ROOT/trsa_ws/install/setup.bash" >> ~/.bashrc
-fi
-
-# Install IsaacLab and IsaacSim if isaac_ros-dev exist
-if [ -d "/home/$USERNAME/isaac_ros-dev" ]; then
-    ln -sf /home/$USERNAME/isaac_ros-dev "$WORKSPACE_ROOT/"
-    echo "export ISAAC_ROS_WS=/home/$USERNAME/isaac_ros-dev" >> ~/.bashrc
-    echo "Installing Isaac Sim and Isaac Lab"
-    sudo -u vscode bash -c $WORKSPACE_ROOT/.devcontainer/scripts/issaclab-pyenv.sh
 fi
 
 # Add useful allias
