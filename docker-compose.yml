@@ -69,13 +69,8 @@ services:
       #- '$USERPROFILE\Documents\FCT\Ros2\.gazebo-cache:/home/vscode/.gazebo'
       #- '$USERPROFILE\Documents\FCT\Ros2\.ignition-cache:/home/vscode/.ignition'
 
-      # Mount points for ISAAC ROS (Linux only, might work with WSL)
-      #- $HOME/Documents/FCT/Ros2/isaac_ros-dev:/home/vscode/isaac_ros-dev
-      #- $HOME/.cache/warp/:/home/vscode/.cache/warp:rw
-      #- $HOME/.cache/ov/:/home/vscode/.cache/ov:rw
-      # Since TensorRT is about 10gb is not provided with the image.
-      # If need can be download from the nvidia developer website or install in the container afterwards
-      #- /opt/TensorRT:/opt/TensorRT:rw
+      # User Defined Mount Points
+      #- $HOME/Documents/FCT/Ros2/so101_ws:/home/vscode/so101_ws
 
     # Better process handling by using a process management system (tini).
     init: true
@@ -116,6 +111,53 @@ services:
 
     # Example of setup for ROS to be able to communicate across containers.
     # Is unnecessary if using a single container.
+
+  # IsaacLab/IsaacSim container, only work on linux machine for windows read the documentation
+  # isaac-lab:
+  #   #image: nvcr.io/nvidia/isaac-sim:5.1.0 # For isaacsim
+  #   image: nvcr.io/nvidia/isaac-lab:2.3.2
+  #   container_name: isaac-lab
+  #   entrypoint: bash
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - PRIVACY_CONSENT=Y
+  #     - DISPLAY=$DISPLAY
+  #     - NVIDIA_VISIBLE_DEVICES=all
+  #     - NVIDIA_DRIVER_CAPABILITIES=all
+  #     - __NV_PRIME_RENDER_OFFLOAD=1
+  #     - __GLX_VENDOR_LIBRARY_NAME=nvidia
+  #   runtime: nvidia
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: all
+  #             capabilities: [gpu]
+  #   volumes:
+  #     - /tmp/.X11-unix:/tmp/.X11-unix:rw
+  #     - $HOME/.Xauthority:/isaac-sim/.Xauthority
+  #     - $HOME/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw
+  #     - $HOME/docker/isaac-sim/cache/ov:/root/.cache/ov:rw
+  #     - $HOME/docker/isaac-sim/cache/pip:/root/.cache/pip:rw
+  #     - $HOME/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw
+  #     - $HOME/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw
+  #     - $HOME/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw
+  #     - $HOME/docker/isaac-sim/data:/root/.local/share/ov/data:rw
+  #     - $HOME/docker/isaac-sim/documents:/root/Documents:rw
+  #   # User Defined Mount Points
+  #     - $HOME/Documents/FCT/Ros2/so101_ws:/workspace/so101_ws
+  #   stdin_open: true
+  #   tty: true
+  #   restart: "no"
+
+  #   # Used to allow ROS to communicate across containers.
+  #   ipc: service:donor
+  #   pid: service:donor
+
+  #   # Isolate ROS nodes into their own network.
+  #   network_mode: service:donor
+
   donor:
     ports:
       # Expose noVNC web app.

@@ -167,3 +167,12 @@ Imports the image and its names. It will still be tagged as `ros-jazzy-rob-trsa:
   - One solution would be to use your own install script instead of `rosdep`.
 - ROS `launch` files aren't symlinked unlike Python code.
   - Rebuild the package when `launch` files are modified.
+
+# Documentation
+https://docs.ros.org/en/jazzy/Installation.html
+
+https://docs.ros.org/en/jazzy/How-To-Guides/Run-2-nodes-in-single-or-separate-docker-containers.html
+
+https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/index.html
+
+https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/install_ros.html

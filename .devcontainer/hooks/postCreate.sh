@@ -7,8 +7,12 @@ source /opt/ros/$ROS_DISTRO/setup.bash
 # Auto-activate ROS whenever bash shell is opened.
 #echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
 #echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+echo "FASTRTPS_DEFAULT_PROFILES_FILE=~/.ros/fastdds.xml" >> ~/.bashrc
 echo 'PATH=$PATH:/usr/local/bin' >> /root/.bashrc
 echo 'PATH=$PATH:/usr/local/bin' >> ~/.bashrc
+echo 'alias isaacsim="sudo docker exec -it isaac-lab ./_isaac_sim/runapp.sh"' >> ~/.bashrc
+echo 'alias isaaclab="sudo docker exec -it isaac-lab ./isaaclab.sh"' >> ~/.bashrc
+echo 'alias issacbash="sudo docker exec -it isaac-lab bash"' >> ~/.bashrc
 
 # Source ros-internal workspace if exist (For AArch64 machines)
 if [ -d "/opt/ros-internal" ]; then

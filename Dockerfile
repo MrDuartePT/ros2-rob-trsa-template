@@ -193,3 +193,8 @@ RUN colcon mixin add default \
     colcon metadata add default \
     https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
     colcon metadata update
+
+# Add fastdds file required for ROS2 bridge
+RUN mkdir -p /home/${USERNAME}/.ros/
+COPY fastdds.xml /home/${USERNAME}/.ros/fastdds.xml
+ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/${USERNAME}/.ros/fastdds.xml
