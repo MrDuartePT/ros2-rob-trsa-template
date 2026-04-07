@@ -156,24 +156,6 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-turtlebot4-simulator \
     ros-${ROS_DISTRO}-turtlebot4-desktop
 
-# Nvidia Isaac ROS and Intel Realsense packages (291MB)
-# Install Python3.11 require for isaacsim
-RUN sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt update && sudo apt -y install python3.11 python3.11-venv;
-
-# Isaac SIM not included in docker image (can be install using pip requriment file
-RUN if [ "$MACOS_BUILD" = "false" ]; then \
-    curl -sSL https://isaac.download.nvidia.com/isaac-ros/repos.key -o /usr/share/keyrings/isaac-ros.key && \
-    echo "deb [signed-by=/usr/share/keyrings/isaac-ros.key] https://isaac.download.nvidia.com/isaac-ros/release-4 $(lsb_release -cs) main" > /etc/apt/sources.list.d/isaac-ros.list && \
-    curl -sSf https://librealsense.realsenseai.com/Debian/librealsenseai.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/librealsenseai.gpg > /dev/null && \
-    echo "deb [signed-by=/etc/apt/keyrings/librealsenseai.gpg] https://librealsense.realsenseai.com/Debian/apt-repo `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/librealsense.list && \
-    apt update && apt-get install -y libnvvpi4 vpi4-dev vpi4-samples && \ 
-    apt-get install -y ros-${ROS_DISTRO}-vision-msgs ros-${ROS_DISTRO}-ackermann-msgs ros-${ROS_DISTRO}-isaac-ros-common isaac-ros-cli; \
-fi
-
-RUN if [ && "$TARGETARCH" = "amd64" ]; then \
-    apt update && apt-get install -y librealsense2-utils librealsense2-dev; \
-fi
-
 # Initialize rosdep package manager.
 RUN rosdep init && rosdep update
 
